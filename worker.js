@@ -1,22 +1,37 @@
 import HTML_TEMPLATE from "./index.html";
+import CSS_TEMPLATE from "./style.css";
+import JS_TEMPLATE from "./app.js";
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // 1. 메인 랜딩 페이지 라우팅
+    // 1. 메인 랜딩 페이지 서빙
     if (url.pathname === "/") {
       return new Response(HTML_TEMPLATE, {
         headers: { "content-type": "text/html;charset=UTF-8" },
       });
     }
 
-    // 2. 로그인 API 라우팅 (KV DB를 통한 횟수 제약 및 세션 구현)
+    // 2. 이원화된 정적 자산(CSS, JS) 엣지 라우팅 주입
+    if (url.pathname === "/style.css") {
+      return new Response(CSS_TEMPLATE, {
+        headers: { "content-type": "text/css;charset=UTF-8" },
+      });
+    }
+
+    if (url.pathname === "/app.js") {
+      return new Response(JS_TEMPLATE, {
+        headers: { "content-type": "application/javascript;charset=UTF-8" },
+      });
+    }
+
+    // 3. 로그인 비동기 API 처리 (KV DB 연산 + 보안 쿠키 발급)
     if (url.pathname === "/api/login" && request.method === "POST") {
       const clientIP = request.headers.get("cf-connecting-ip") || "unknown";
       const rateLimitKey = `rate_limit_${clientIP}`;
 
-      // Brute-force 방어 조치 (5회 실패 시 15분 차단)
+      // 무차별 대입(Brute-force) 방어 조치 (5회 실패 시 15분 차단)
       let currentAttempts = await env.DB.get(rateLimitKey);
       currentAttempts = currentAttempts ? parseInt(currentAttempts) : 0;
 
@@ -28,16 +43,15 @@ export default {
       const inputEmail = postData.get("email");
       const inputPassword = postData.get("password");
 
-      // env Private 변수 기능을 이용 자격 증명
+      // 대시보드에 설정한 Secrets 암호화 변수와 매칭 검증
       if (inputEmail === env.ADMIN_EMAIL && inputPassword === env.ADMIN_PASSWORD) {
-        // 인증 통과 시 차단 카운트 리셋
-        await env.DB.delete(rateLimitKey);
+        await env.DB.delete(rateLimitKey); // 성공 시 차단 카운트 리셋
 
-        // UUID 세션 키 생성 및 KV 동기화 (24시간)
+        // 세션 토큰 생성 및 KV DB 등록 (24시간 유지)
         const sessionToken = crypto.randomUUID();
         await env.DB.put(`session_${sessionToken}`, "active", { expirationTtl: 86400 });
 
-        // 클라이언트 조작 불가능한 HttpOnly / Secure 쿠키 릴리즈
+        // 철벽 보안 옵션 조합 쿠키 (HttpOnly, Secure, SameSite)
         const sessionCookie = `session=${sessionToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400`;
         
         return new Response("Success", {
@@ -45,25 +59,27 @@ export default {
           headers: { "Set-Cookie": sessionCookie }
         });
       } else {
-        // 틀릴 때마다 카운트 누적 및 15분 만료 처리
+        // 실패 시 카운트 누적 (15분 잠금)
         await env.DB.put(rateLimitKey, (currentAttempts + 1).toString(), { expirationTtl: 900 });
         return new Response("Invalid credentials.", { status: 401 });
       }
     }
 
-    // 3. 내 전용 대시보드 라우팅 (sidelabs.net/dashboard)
+    // 4. 내 전용 대시보드 라우팅 및 Cloudflare 인프라 상태 연동 (sidelabs.net/dashboard)
     if (url.pathname === "/dashboard") {
       const cookieHeader = request.headers.get("Cookie") || "";
       const cookieMatch = cookieHeader.match(/session=([a-zA-Z0-9-]+)/);
 
+      // 세션 쿠키가 없으면 메인 화면으로 튕겨냄
       if (!cookieMatch) return Response.redirect(`${url.origin}/`, 302);
 
       const userSessionToken = cookieMatch[1];
       const isSessionValid = await env.DB.get(`session_${userSessionToken}`);
 
+      // 유효하지 않은 세션이면 퇴출
       if (!isSessionValid) return Response.redirect(`${url.origin}/`, 302);
 
-      // 프라이빗 환경 변수를 이용한 안전한 Cloudflare API 상태 호출
+      // 내부 엣지망을 통한 Cloudflare 인프라 상태 파싱
       let cloudflareStatusMarkup = "";
       try {
         const cloudflareApiResponse = await fetch(`https://api.cloudflare.com/client/v4/zones/${env.CF_ZONE_ID}`, {
@@ -102,7 +118,6 @@ export default {
   }
 };
 
-// 전용 대시보드용 내부 가상 마크업 빌더
 function getDashboardHTML(statusContent) {
   return `
 <!DOCTYPE html>
