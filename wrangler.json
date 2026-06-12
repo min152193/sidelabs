@@ -1,5 +1,5 @@
 {
-  "name": "sidelabs-landing",
+  "name": "sidelabs-main-landing",
   "main": "worker.js",
   "compatibility_date": "2026-06-12",
   "kv_namespaces": [
@@ -11,7 +11,7 @@
   "rules": [
     {
       "type": "Text",
-      "globs": ["*.html", "*.css", "*.js"],
+      "globs": ["*.html", "*.css"],
       "fallthrough": true
     }
   ]
