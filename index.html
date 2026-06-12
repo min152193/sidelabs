@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SideLabs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-mode">
+
+    <div class="controls-container">
+        <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
+        <button class="toggle-btn" id="pause-toggle">PAUSE</button>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="card-container" id="interactive-card">
+            <div class="card" id="card-element">
+                
+                <div class="card-face front-face">
+                    <div class="card-bg"></div>
+                    <div class="border-glow"></div>
+                    <div class="glint"></div>
+                    <div class="card-content">
+                        <h1 class="logo">SideLabs</h1>
+                        <div class="contact-section">
+                            <div class="label">Contact</div>
+                            <a class="email-btn" href="mailto:contact@sidelabs.net">contact@sidelabs.net</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-face back-face">
+                    <div class="card-bg"></div>
+                    <div class="border-glow"></div>
+                    <div class="glint"></div>
+                    <div class="solid-overlay"></div>
+                    <div class="card-content center-content">
+                        <form class="login-grid" id="login-form">
+                            <div class="login-title">LOGIN</div>
+                            <div class="login-fields">
+                                <input type="email" name="email" class="login-input" placeholder="Email" required>
+                                <input type="password" name="password" class="login-input" placeholder="Password" required>
+                                <button type="submit" class="submit-btn">SIGN IN</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="action-container">
+            <button class="spin-btn" id="spin-trigger">LOGIN</button>
+        </div>
+    </div>
+
+    <div class="global-footer">© SideLabs. All rights reserved.</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
