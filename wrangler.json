@@ -18,7 +18,7 @@
   "rules": [
     {
       "type": "Text",
-      "globs": ["*.html", "*.css", "*.js"],
+      "globs": ["*.html", "*.css", "app.js"],
       "fallthrough": true
     }
   ]
