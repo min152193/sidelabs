@@ -18,26 +18,21 @@ let mouseStopTimer;
 
 themeToggleBtn.textContent = 'LIGHT MODE';
 
-// 💡 [추가] 로그인 비동기 연동 처리
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const formData = new FormData(loginForm);
-    
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
             body: formData
         });
-        
         if (response.ok) {
-            // 로그인 성공 시 이동
             window.location.href = '/dashboard';
         } else {
-            const errorText = await response.text();
-            alert(errorText || '로그인 실패. 정보를 확인하세요.');
+            alert('로그인 실패. 정보를 확인하세요.');
         }
     } catch (err) {
-        alert('서버 연결 실패. 나중에 다시 시도하세요.');
+        alert('서버 연결 장애');
     }
 });
 
@@ -45,31 +40,13 @@ themeToggleBtn.addEventListener('click', () => {
     isDarkMode = !isDarkMode;
     document.body.classList.toggle('dark-mode');
     themeToggleBtn.textContent = isDarkMode ? 'LIGHT MODE' : 'DARK MODE';
-    if (isFlipped) {
-        isFlipped = false;
-        spinYAngle = 0;
-        targetRotateX = 0;
-        targetRotateY = 0;
-        targetGlintX = 50;
-        targetGlintY = 50;
-        cardElement.classList.remove('is-login');
-        spinTriggerBtn.textContent = 'LOGIN';
-    }
+    if (isFlipped) resetToFront();
 });
 
 pauseToggleBtn.addEventListener('click', (e) => {
     isPaused = !isPaused;
     if (isPaused) {
-        targetRotateX = targetRotateY = currentRotateX = currentRotateY = spinYAngle = currentSpinYAngle = 0;
-        targetGlintX = targetGlintY = currentGlintX = currentGlintY = 50;
-        isFlipped = false;
-        cardElement.classList.remove('is-login');
-        spinTriggerBtn.textContent = 'LOGIN';
-        cardElement.style.transform = 'rotateX(0deg) rotateY(0deg)';
-        cardElement.style.setProperty('--glint-x', '50%');
-        cardElement.style.setProperty('--glint-y', '50%');
-        cardElement.style.setProperty('--border-glow-x', '50%');
-        cardElement.style.setProperty('--border-glow-y', '50%');
+        resetToFront();
         pauseToggleBtn.textContent = 'PLAY';
     } else {
         pauseToggleBtn.textContent = 'PAUSE';
@@ -89,6 +66,17 @@ spinTriggerBtn.addEventListener('click', (e) => {
     spinTriggerBtn.textContent = isFlipped ? 'BACK' : 'LOGIN';
     e.stopPropagation();
 });
+
+function resetToFront() {
+    isFlipped = false;
+    spinYAngle = 0;
+    targetRotateX = 0;
+    targetRotateY = 0;
+    targetGlintX = 50;
+    targetGlintY = 50;
+    cardElement.classList.remove('is-login');
+    spinTriggerBtn.textContent = 'LOGIN';
+}
 
 function handleCardMove(clientX, clientY) {
     if (isPaused) return;
@@ -131,15 +119,15 @@ function renderingAnimationLoop() {
         currentRotateY += (targetRotateY - currentRotateY) * 0.04;
         currentSpinYAngle += (spinYAngle - currentSpinYAngle) * 0.04;
         
-        cardElement.style.transform = 'rotateX(' + currentRotateX.toFixed(2) + 'deg) rotateY(' + (currentRotateY + currentSpinYAngle).toFixed(2) + 'deg)';
+        cardElement.style.transform = `rotateX(${currentRotateX.toFixed(2)}deg) rotateY(${(currentRotateY + currentSpinYAngle).toFixed(2)}deg)`;
         
         currentGlintX += (targetGlintX - currentGlintX) * 0.04;
         currentGlintY += (targetGlintY - currentGlintY) * 0.04;
         
-        cardElement.style.setProperty('--glint-x', currentGlintX.toFixed(2) + '%');
-        cardElement.style.setProperty('--glint-y', currentGlintY.toFixed(2) + '%');
-        cardElement.style.setProperty('--border-glow-x', currentGlintX.toFixed(2) + '%');
-        cardElement.style.setProperty('--border-glow-y', currentGlintY.toFixed(2) + '%');
+        cardElement.style.setProperty('--glint-x', `${currentGlintX.toFixed(2)}%`);
+        cardElement.style.setProperty('--glint-y', `${currentGlintY.toFixed(2)}%`);
+        cardElement.style.setProperty('--border-glow-x', `${currentGlintX.toFixed(2)}%`);
+        cardElement.style.setProperty('--border-glow-y', `${currentGlintY.toFixed(2)}%`);
     }
     requestAnimationFrame(renderingAnimationLoop);
 }
