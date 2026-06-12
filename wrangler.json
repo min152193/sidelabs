@@ -5,10 +5,7 @@
   "routes": [
     {
       "pattern": "sidelabs.net",
-      "custom_domain": true
-    },
-    {
-      "pattern": "sidelabs.net/*",
+      "zone_name": "sidelabs.net",
       "custom_domain": true
     }
   ],
