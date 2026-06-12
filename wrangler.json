@@ -18,8 +18,13 @@
   "rules": [
     {
         "type": "Text",
-        "globs": ["*.html", "*.css", "*.txt", "*.png"],
+        "globs": ["*.html", "*.css", "*.txt"],
         "fallthrough": true
+    },
+    {
+      "type": "Data",
+      "globs": ["*.png"],
+      "fallthrough": true
     }
 ]
 }
