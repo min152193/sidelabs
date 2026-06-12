@@ -2,6 +2,16 @@
   "name": "sidelabs-main-landing",
   "main": "worker.js",
   "compatibility_date": "2026-06-12",
+  "routes": [
+    {
+      "pattern": "sidelabs.net",
+      "custom_domain": true
+    },
+    {
+      "pattern": "sidelabs.net/*",
+      "custom_domain": true
+    }
+  ],
   "kv_namespaces": [
     {
       "binding": "DB",
