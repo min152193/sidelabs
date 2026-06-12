@@ -17,9 +17,9 @@
   ],
   "rules": [
     {
-      "type": "Text",
-      "globs": ["*.html", "*.css", "*.txt"],
-      "fallthrough": true
+        "type": "Text",
+        "globs": ["*.html", "*.css", "*.txt", "*.png"],
+        "fallthrough": true
     }
-  ]
+]
 }

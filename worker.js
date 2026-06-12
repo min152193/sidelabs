@@ -1,12 +1,15 @@
 import HTML_TEMPLATE from "./index.html";
 import CSS_TEMPLATE from "./style.css";
 import JS_TEMPLATE from "./app.txt";
+import FAV_32 from "./ico/fav_32.png";
+import FAV_180 from "./ico/fav_180.png";
+import FAV_192 from "./ico/fav_192.png";
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // 1. 정적 자산 라우팅
+    // 정적 자산 라우팅
     if (url.pathname === "/") {
       return new Response(HTML_TEMPLATE, { headers: { "content-type": "text/html;charset=UTF-8" } });
     }
@@ -15,6 +18,30 @@ export default {
     }
     if (url.pathname === "/app.js") {
       return new Response(JS_TEMPLATE, { headers: { "content-type": "application/javascript;charset=UTF-8" } });
+    }
+    if (url.pathname === "/ico/fav_32.png") {
+      return new Response(FAV_32, {
+        headers: { "content-type": "image/png" },
+      });
+    }
+
+    if (url.pathname === "/ico/fav_180.png") {
+      return new Response(FAV_180, {
+        headers: { "content-type": "image/png" },
+      });
+    }
+
+    if (url.pathname === "/ico/fav_192.png") {
+      return new Response(FAV_192, {
+        headers: { "content-type": "image/png" },
+      });
+    }
+
+    // /favicon.ico 대비 예외처리
+    if (url.pathname === "/favicon.ico") {
+      return new Response(FAV_32, {
+        headers: { "content-type": "image/png" },
+      });
     }
 
     // 2. 로그인 인증 처리
@@ -45,7 +72,7 @@ export default {
       }
     }
 
-    // 3. 통제실 대시보드 - 클라우드플레어 어카운트 통계 그대로 이식
+    // 대시보드
     if (url.pathname === "/dashboard") {
       const cookieHeader = request.headers.get("Cookie") || "";
       const cookieMatch = cookieHeader.match(/session=([a-zA-Z0-9-]+)/);
@@ -65,7 +92,7 @@ export default {
       };
 
       try {
-        // [지표 1] 도메인 상태 조회
+        // 도메인 상태 조회
         const zoneRes = await fetch(`https://api.cloudflare.com/client/v4/zones/${env.CF_ZONE_ID}`, {
           headers: { "Authorization": `Bearer ${env.CF_API_TOKEN}`, "content-type": "application/json" }
         });
@@ -75,7 +102,7 @@ export default {
           metrics.status = zoneData.result.status.toUpperCase();
         }
 
-        // [지표 2] 24시간 실시간 트래픽 GraphQL 쿼리 송신 (어카운트 홈 통계 추출용)
+        // 트래픽 GraphQL 쿼리 송신
         const query = JSON.stringify({
           query: `query {
             viewer {
@@ -106,7 +133,7 @@ export default {
           metrics.requests = dataGroup.requests || 0;
           metrics.threats = dataGroup.threats || 0;
           
-          // 대역폭 데이터 파싱 (Bytes -> MB/GB 단위 변환)
+          // 대역폭 데이터 파싱 및 단위 변환
           const rawBytes = dataGroup.bytes || 0;
           if (rawBytes > 1024 * 1024 * 1024) {
             metrics.bytes = `${(rawBytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
