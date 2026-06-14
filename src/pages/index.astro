@@ -13,45 +13,34 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
     <link rel="apple-touch-icon" sizes="180x180" href="/ico/fav_180.png?v=1">
     <link rel="icon" type="image/png" sizes="192x192" href="/ico/fav_192.png?v=1">
     <style is:global>
-        /* 🚨 ANTI-HIJACKING CSS LAYER: FORCE SCROLLING 🚨 */
-        html, body {
-            overflow-y: auto !important; /* Force native scrolling! */
-            overflow-x: hidden !important;
-            height: auto !important;
-            min-height: 100vh !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            position: relative !important;
-            background-color: #0c0c0c !important; /* Safe dark mode baseline */
-            color: #f0f0f0 !important;
-            font-family: 'Poppins', sans-serif;
-            touch-action: pan-y !important; /* Stop JS from stealing wheel/touch events */
-        }
-        
-        /* Reset containers to be simple non-trapping scroll viewports */
-        .landing-section, .main-wrapper, .controls-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100dvh;
-            width: 100%;
-            position: relative !important;
-            overflow: visible !important;
-        }
-
-        /* Essential Bounce Animation Baseline */
-        @keyframes bounceBaseline {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
-        }
-        
-        .scroll-spacer-baseline {
-            height: 120vh; /* Mandatory scrollable space */
-            width: 100%;
-            pointer-events: none;
-        }
+      html, body {
+        overflow-y: auto !important; /* Absolute priority */
+        overflow-x: hidden !important;
+        height: auto !important;
+        min-width: 100vw;
+        min-height: 100vh !important;
+        position: relative !important;
+        touch-action: pan-y !important;
+      }
+      .main-wrapper, .landing-section {
+        position: relative !important;
+        overflow: visible !important; /* Do not let this trap focus */
+        height: auto !important;
+        min-height: 100vh !important;
+      }
+      .controls-container {
+        position: fixed !important;
+        top: 1.5rem !important;
+        right: 1.5rem !important;
+        display: flex !important;
+        gap: 0.8rem !important;
+        z-index: 100 !important;
+      }
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+        40% { transform: translateX(-50%) translateY(-10px); }
+        60% { transform: translateX(-50%) translateY(-5px); }
+      }
     </style>
 </head>
 <body class="dark-mode">
@@ -105,54 +94,40 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
         </div>
     </section>
 
-    <div class="scroll-spacer-baseline"></div>
-    <div id="redirect-sentinel-baseline" style="height: 10px; width: 100%; pointer-events: none;"></div>
+    <div class="scroll-spacer" style="height: 120vh; width: 100%; pointer-events: none;"></div>
+    <div id="redirect-sentinel" style="height: 10px; width: 100%; pointer-events: none;"></div>
 
     <script src="/app.js" is:inline></script>
 
-    <div id="scroll-indicator-baseline" style="position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 2147483647; color: #94a3b8; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounceBaseline 2s infinite; pointer-events: auto; cursor: pointer; visibility: visible; opacity: 1;">
+    <div id="scroll-indicator" style="position: fixed !important; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 2147483647 !important; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite; pointer-events: auto; cursor: pointer; visibility: visible; opacity: 1;">
         <span style="font-weight: 600;">SCROLL DOWN</span>
         <span style="font-size: 1.8rem; margin-top: 5px; font-weight: bold; line-height: 1;">↓</span>
     </div>
 
     <script is:inline>
-        (function() {
-            window.addEventListener('load', function() {
-                var indicator = document.getElementById('scroll-indicator-baseline');
-                var sentinel = document.getElementById('redirect-sentinel-baseline');
-                
-                // 1. Error-Free Native Scroll Listener
-                window.addEventListener('scroll', function() {
-                    if (indicator) {
-                        // Immediate fade-out once scrolling begins
-                        indicator.style.opacity = (window.scrollY > 15) ? '0' : '1';
-                        indicator.style.transition = 'opacity 0.2s ease';
-                    }
-                }, { passive: true });
-
-                // 2. High-Priority Click Redirect (Backup)
-                if (indicator) {
-                    indicator.addEventListener('click', function() {
-                        window.location.href = '/blog';
-                    });
-                }
-
-                // 3. Reliable Sentinel-Based Bottom Redirection
-                if (sentinel) {
-                    var observer = new IntersectionObserver(function(entries) {
-                        if (entries[0].isIntersecting) {
-                            // Hard fade-out on redirect
-                            document.body.style.opacity = '0';
-                            document.body.style.transition = 'opacity 0.4s ease';
-                            setTimeout(function() {
-                                window.location.href = '/blog';
-                            }, 400);
-                        }
-                    }, { threshold: 0.05 });
-                    observer.observe(sentinel);
-                }
-            });
-        })();
+      (function() {
+        window.addEventListener('load', function() {
+          var indicator = document.getElementById('scroll-indicator');
+          window.addEventListener('scroll', function() {
+            if (indicator) {
+              indicator.style.opacity = (window.scrollY > 15) ? '0' : '1';
+              indicator.style.transition = 'opacity 0.2s ease';
+            }
+          }, { passive: true });
+          
+          var sentinel = document.getElementById('redirect-sentinel');
+          if (sentinel) {
+            var observer = new IntersectionObserver(function(entries) {
+              if (entries[0].isIntersecting) {
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.4s ease';
+                setTimeout(function() { window.location.href = '/blog'; }, 400);
+              }
+            }, { threshold: 0.05 });
+            observer.observe(sentinel);
+          }
+        });
+      })();
     </script>
 </body>
 </html>
