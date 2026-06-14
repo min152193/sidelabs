@@ -11,11 +11,6 @@ export default {
 
     // 1. ASTRO BYPASS GUARD
     if (url.pathname === '/blog' || url.pathname.startsWith('/blog/')) {
-      // If using Cloudflare Pages with Workers integration, use env.ASSETS
-      if (env.ASSETS) {
-        return env.ASSETS.fetch(request);
-      }
-      // If using standard static bypass, pass-through to origin
       return fetch(request);
     }
 
