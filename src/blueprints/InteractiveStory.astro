@@ -831,24 +831,30 @@ const title = frontmatter?.title || "Blog Post";
         }
     </script>
 <style is:global>
-  /* Blast the ad container to the literal absolute edge of the window browser */
+  /* 🚨 FORCE SIDEBAR AD SNAP TO LITERAL RIGHT EDGE 🚨 */
   .sidebar-ad-container {
     position: fixed !important;
     top: 150px !important;
-    right: 12px !important; /* Force pull to the extreme right gap */
+    right: 0px !important; /* Mandatory snap to browser boundary */
     left: auto !important;
     width: 160px !important;
     height: 600px !important;
-    z-index: 2147483647 !important; /* Pierce through any pinned GSAP section elements */
+    z-index: 2147483647 !important; /* Higher than any competitive layer */
     display: block !important;
   }
-
-  /* Force smash the article layout into a centered narrow column */
+  
+  /* 🚨 FORCE ARTICLE TEXT TO CENTER NARROW COLUMN 🚨 */
   .article-body-wrapper {
     max-width: 680px !important;
     margin: 0 auto !important;
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
+  }
+  .article-body-wrapper * {
     text-align: center !important;
   }
 </style>

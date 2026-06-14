@@ -1,188 +1,107 @@
 ---
-import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
+// Clean Baseline index.astro - Forced Restoration
 ---
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SideLabs</title>
+    <title>SideLabs - Reconstructed Baseline</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="icon" type="image/png" sizes="32x32" href="/ico/fav_32.png?v=1">
-    <link rel="apple-touch-icon" sizes="180x180" href="/ico/fav_180.png?v=1">
-    <link rel="icon" type="image/png" sizes="192x192" href="/ico/fav_192.png?v=1">
-    <style>
-        /* Multi-page scrolling overrides */
-        body {
-            display: block !important;
-            overflow-y: auto !important;
+    <style is:global>
+        /* 🚨 ANTI-HIJACKING CSS LAYER: FORCE SCROLLING 🚨 */
+        html, body {
+            overflow-y: auto !important; /* Force native scrolling! */
             overflow-x: hidden !important;
-            min-height: 100vh;
-            background-attachment: fixed !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+            background-color: #0c0c0c !important; /* Safe dark mode baseline */
+            color: #f0f0f0 !important;
+            font-family: 'Poppins', sans-serif;
+            touch-action: pan-y !important; /* Stop JS from stealing wheel/touch events */
         }
         
-        .controls-container {
-            position: fixed !important;
-        }
-
-        .landing-section {
+        /* Reset containers to be simple non-trapping scroll viewports */
+        .landing-section, .main-wrapper, .controls-container {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             min-height: 100dvh;
             width: 100%;
-            position: relative;
-            box-sizing: border-box;
+            position: relative !important;
+            overflow: visible !important;
         }
 
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
-            40% { transform: translate(-50%, -10px); }
-            60% { transform: translate(-50%, -5px); }
+        /* Essential Bounce Animation Baseline */
+        @keyframes bounceBaseline {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
         }
-
-        /* Scroll Space to trigger cinematic redirect transition */
-        .scroll-spacer {
-            height: 60vh;
+        
+        .scroll-spacer-baseline {
+            height: 120vh; /* Mandatory scrollable space */
             width: 100%;
             pointer-events: none;
         }
-
-        #redirect-sentinel {
-            height: 10px;
-            width: 100%;
-            pointer-events: none;
-        }
-
     </style>
 </head>
-<body class="dark-mode">
-    <div class="controls-container">
-        <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
-        <button class="toggle-btn" id="pause-toggle">PAUSE</button>
-    </div>
-
-    <!-- Main portfolio landing page -->
+<body>
     <section class="landing-section">
-        <div class="main-wrapper">
-            <div class="card-container" id="interactive-card">
-                <div class="card" id="card-element">
-                    
-                    <div class="card-face front-face">
-                        <div class="card-bg"></div>
-                        <div class="border-glow"></div>
-                        <div class="glint"></div>
-                        <div class="card-content">
-                            <h1 class="logo">SideLabs</h1>
-                            <div class="contact-section">
-                                <div class="label">Contact</div>
-                                <a class="email-btn" href="mailto:contact@sidelabs.net">contact@sidelabs.net</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card-face back-face">
-                        <div class="card-bg"></div>
-                        <div class="border-glow"></div>
-                        <div class="glint"></div>
-                        <div class="solid-overlay"></div>
-                        <div class="card-content center-content">
-                            <form class="login-grid" id="login-form">
-                                <div class="login-title">LOGIN</div>
-                                <div class="login-fields">
-                                    <input type="email" name="email" class="login-input" placeholder="Email" required>
-                                    <input type="password" name="password" class="login-input" placeholder="Password" required>
-                                    <button type="submit" class="submit-btn">SIGN IN</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="action-container">
-                <button class="spin-btn" id="spin-trigger">LOGIN</button>
-            </div>
-        </div>
+        <h1>SideLabs [Reconstruction View]</h1>
+        <p>The core rendering bottleneck is being identified.</p>
     </section>
 
+    <div class="scroll-spacer-baseline"></div>
+    <div id="redirect-sentinel-baseline" style="height: 10px; width: 100%; pointer-events: none;"></div>
 
-    <!-- Scroll Spacer and Sentinel for Redirection -->
-    <div class="scroll-spacer"></div>
-    <div id="redirect-sentinel"></div>
+    <div id="scroll-indicator-baseline" style="position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 2147483647; color: #94a3b8; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounceBaseline 2s infinite; pointer-events: auto; cursor: pointer; visibility: visible; opacity: 1;">
+        <span style="font-weight: 600;">SCROLL DOWN</span>
+        <span style="font-size: 1.8rem; margin-top: 5px; font-weight: bold; line-height: 1;">↓</span>
+    </div>
 
-
-    <script src="/app.js" is:inline></script>
-    
     <script is:inline>
-      (function() {
-        window.addEventListener('DOMContentLoaded', function() {
-          var indicator = document.getElementById('scroll-indicator');
-          
-          // Standalone scroll controller for the text/arrow indicator
-          window.addEventListener('scroll', function() {
-            if (indicator) {
-              if (window.scrollY > 20) {
-                indicator.style.opacity = '0';
-                indicator.style.visibility = 'hidden';
-              } else {
-                indicator.style.opacity = '1';
-                indicator.style.visibility = 'visible';
-              }
-            }
-          }, { passive: true });
+        (function() {
+            window.addEventListener('load', function() {
+                var indicator = document.getElementById('scroll-indicator-baseline');
+                var sentinel = document.getElementById('redirect-sentinel-baseline');
+                
+                // 1. Error-Free Native Scroll Listener
+                window.addEventListener('scroll', function() {
+                    if (indicator) {
+                        // Immediate fade-out once scrolling begins
+                        indicator.style.opacity = (window.scrollY > 15) ? '0' : '1';
+                        indicator.style.transition = 'opacity 0.2s ease';
+                    }
+                }, { passive: true });
 
-          // Insurance click-to-redirect backup
-          if (indicator) {
-            indicator.style.pointerEvents = 'auto';
-            indicator.style.cursor = 'pointer';
-            indicator.addEventListener('click', function() {
-              window.location.href = '/blog';
+                // 2. High-Priority Click Redirect (Backup)
+                if (indicator) {
+                    indicator.addEventListener('click', function() {
+                        window.location.href = '/blog';
+                    });
+                }
+
+                // 3. Reliable Sentinel-Based Bottom Redirection
+                if (sentinel) {
+                    var observer = new IntersectionObserver(function(entries) {
+                        if (entries[0].isIntersecting) {
+                            // Hard fade-out on redirect
+                            document.body.style.opacity = '0';
+                            document.body.style.transition = 'opacity 0.4s ease';
+                            setTimeout(function() {
+                                window.location.href = '/blog';
+                            }, 400);
+                        }
+                    }, { threshold: 0.05 });
+                    observer.observe(sentinel);
+                }
             });
-          }
-
-          // Standalone sentinel tracking for bottom-out navigation
-          var sentinel = document.getElementById('redirect-sentinel');
-          if (sentinel) {
-            var observer = new IntersectionObserver(function(entries) {
-              if (entries[0].isIntersecting) {
-                document.body.style.opacity = '0';
-                document.body.style.transition = 'opacity 0.5s ease';
-                setTimeout(function() {
-                  window.location.href = '/blog';
-                }, 500);
-              }
-            }, { threshold: 0.05 });
-            observer.observe(sentinel);
-          }
-        });
-      })();
+        })();
     </script>
-
-<div id="scroll-indicator" style="position: fixed !important; bottom: 40px; left: 50%; transform: translateX(-50%); display: block !important; text-align: center !important; z-index: 2147483647 !important; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite; pointer-events: none; mix-blend-mode: difference !important; visibility: visible !important; opacity: 1 !important;">
-  <span style="font-weight: 600; display: block;">SCROLL DOWN</span>
-  <span style="font-size: 1.8rem; margin-top: 5px; font-weight: bold; line-height: 1; display: block;">↓</span>
-</div>
-
-<style is:global>
-  html, body {
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    height: auto !important;
-    min-height: 100vh !important;
-    position: relative !important;
-    touch-action: pan-y !important;
-  }
-  /* Liberate the target content wrappers from layout trapping */
-  .main-wrapper, .landing-section {
-    position: relative !important;
-    overflow: visible !important;
-    height: auto !important;
-    min-height: 100vh !important;
-  }
-</style>
 </body>
 </html>
