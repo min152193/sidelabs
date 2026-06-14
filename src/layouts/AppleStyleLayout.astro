@@ -1,0 +1,752 @@
+---
+import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
+const { frontmatter } = Astro.props;
+const title = frontmatter?.title || "Blog Post";
+---
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} - SideLabs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    
+    <!-- Google AdSense client code -->
+    <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`} crossorigin="anonymous"></script>
+    
+    <style>
+        /* CSS Variables & Theme Integration */
+        :root {
+            --card-bg: rgba(255, 255, 255, 0.35);
+            --border-color: rgba(0, 0, 0, 0.08);
+            --text-color: #0f172a;
+            --text-sub-slate: #475569; /* slate-600 */
+            --heading-gradient: linear-gradient(135deg, #111827 0%, #4f46e5 100%);
+            --section-b-bg: #d4d4d8;
+        }
+        
+        body.dark-mode {
+            --card-bg: rgba(30, 41, 59, 0.4);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-color: #f3f4f6;
+            --text-sub-slate: #94a3b8; /* slate-400 */
+            --heading-gradient: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --section-b-bg: #070a13;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            font-family: 'Poppins', sans-serif;
+            background-attachment: fixed !important;
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
+            display: block !important; /* override centering */
+        }
+        
+        .blog-wrapper {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .controls-container {
+            position: fixed !important;
+            top: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            gap: 0.8rem;
+            z-index: 100;
+        }
+
+        /* Sidebar Ad Styling */
+        .sidebar-ad-container {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            width: 160px;
+            height: 600px;
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            transition: opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body.dark-mode .sidebar-ad-container {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .ad-placeholder-text {
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            padding: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .ad-placeholder-text {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main post layout */
+        .post-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem 2rem;
+            box-sizing: border-box;
+        }
+
+        /* Section A: Intro */
+        .section-intro {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 5rem;
+        }
+        
+        .section-intro h1 {
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: var(--heading-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section-intro p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-sub-slate);
+            margin-bottom: 1.5rem;
+            opacity: 0; /* Animated via GSAP */
+            transform: translateY(20px);
+            transition: color 0.3s ease;
+        }
+
+        /* Section B: Horizontal Scroll interactive section */
+        .horizontal-section {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background: var(--section-b-bg);
+            display: flex;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .horizontal-scroll-container {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-left: 200px; /* offset for sidebar */
+            padding-right: 100px;
+            height: 100%;
+            align-items: center;
+            will-change: transform;
+        }
+        
+        .horizontal-card {
+            flex: 0 0 70vw;
+            max-width: 650px;
+            height: 75vh;
+            margin-right: 4rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+        
+        .horizontal-card:hover {
+            border-color: rgba(79, 70, 229, 0.4);
+        }
+
+        body.dark-mode .horizontal-card:hover {
+            border-color: rgba(165, 180, 252, 0.4);
+        }
+        
+        .card-header {
+            margin-bottom: 1rem;
+        }
+        
+        .card-header h3 {
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+        
+        .card-header p {
+            font-size: 0.9rem;
+            color: var(--text-sub-slate);
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            width: 100%;
+            position: relative;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        body.dark-mode .canvas-container {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        .three-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Stealth Ad Container */
+        .stealth-ad-container {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, background 0.3s ease;
+        }
+
+        body.dark-mode .stealth-ad-container {
+            background: rgba(11, 15, 25, 0.9);
+        }
+
+        /* Section C: Conclusion and SEO logs */
+        .section-conclusion {
+            padding-top: 5rem;
+            margin-bottom: 5rem;
+        }
+        
+        .section-conclusion h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .seo-log-box {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #0369a1; /* sky-700 */
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 3rem;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode .seo-log-box {
+            background: rgba(0, 0, 0, 0.4);
+            color: #38bdf8; /* sky-400 */
+        }
+
+        /* Bottom Grid and Ad */
+        .bottom-grid-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .related-posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 5rem;
+        }
+        
+        .related-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s ease, border-color 0.3s ease, background 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 150px;
+        }
+        
+        .related-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(79, 70, 229, 0.4);
+        }
+
+        body.dark-mode .related-card:hover {
+            border-color: rgba(165, 180, 252, 0.4);
+        }
+        
+        .related-card h4 {
+            font-size: 1.1rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+        
+        .related-card p {
+            font-size: 0.85rem;
+            color: var(--text-sub-slate);
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+        
+        .grid-ad-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 150px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Footer Sliding Drawer Ad Panel */
+        #drawer-ad-panel {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 100%);
+            width: 100%;
+            max-width: 600px;
+            background: #e2e8f0; /* slate-200 */
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 16px 16px 0 0;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease;
+            z-index: 1000;
+            padding: 1.5rem;
+            box-sizing: border-box;
+        }
+
+        body.dark-mode #drawer-ad-panel {
+            background: #0f172a; /* slate-900 */
+        }
+        
+        #drawer-ad-panel.is-visible {
+            transform: translate(-50%, 0);
+        }
+        
+        .drawer-toggle-btn {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #e2e8f0;
+            color: #4f46e5;
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+            white-space: nowrap;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark-mode .drawer-toggle-btn {
+            background: #0f172a;
+            color: #a5b4fc;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .back-to-home {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 18px;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: background 0.2s, color 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        body.dark-mode .back-to-home {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .back-to-home:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark-mode .back-to-home:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="blog-wrapper">
+        
+        <div class="controls-container">
+            <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
+            <a href="/" class="back-to-home">HUB</a>
+        </div>
+        
+        <!-- Rule ②: Sidebar Sticky Ad -->
+        <div class={ADSENSE_CONFIG.selectors.sidebarClass}>
+            <div class="ad-placeholder-text">Sidebar ad<br/>[Slot {ADSENSE_CONFIG.slots.sidebarSticky}]</div>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:160px;height:600px"
+                 data-ad-client={ADSENSE_CONFIG.publisherId}
+                 data-ad-slot={ADSENSE_CONFIG.slots.sidebarSticky}></ins>
+        </div>
+
+        <div class="post-container">
+            <!-- Render content of Section A -->
+            <slot name="section-a" />
+        </div>
+
+        <!-- Section B: Horizontal scrolling pinned interactive area -->
+        <section class="horizontal-section">
+            <div class="horizontal-scroll-container">
+                <slot name="section-b" />
+            </div>
+        </section>
+
+        <div class="post-container">
+            <!-- Render content of Section C -->
+            <slot name="section-c" />
+            
+            <div class="section-conclusion">
+                <h3 class="bottom-grid-title">Recommended Grid</h3>
+                <!-- Rule ③: Bottom Grid with Inline Ad Slot -->
+                <div class="related-posts-grid">
+                    <a href="/blog/harmonic-equatorial-mount" class="related-card">
+                        <div>
+                            <h4>2-Axis Harmonic Equatorial Mount DIY</h4>
+                            <p>Designing and constructing an equatorial telescope mount using strain wave gears.</p>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-color); font-weight: 600; margin-top: 1rem;">READ NOW →</p>
+                    </a>
+                    
+                    <!-- Grid ad inheriting exact card styling -->
+                    <div class={ADSENSE_CONFIG.selectors.gridClass}>
+                        <div class="ad-placeholder-text">In-Feed Native Ad<br/>[Slot {ADSENSE_CONFIG.slots.bottomGridInline}]</div>
+                        <ins class="adsbygoogle"
+                             style="display:block"
+                             data-ad-format="fluid"
+                             data-ad-layout-key="-fb+5w+4e-db+86"
+                             data-ad-client={ADSENSE_CONFIG.publisherId}
+                             data-ad-slot={ADSENSE_CONFIG.slots.bottomGridInline}></ins>
+                    </div>
+
+                    <a href="/" class="related-card">
+                        <div>
+                            <h4>Exploring High-Torque Actuators</h4>
+                            <p>An in-depth review of BLDC motors and harmonic gearheads for precise control.</p>
+                        </div>
+                        <p style="font-size: 0.75rem; color: var(--text-color); font-weight: 600; margin-top: 1rem;">GO HOME →</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rule ④: Drawer / Dropdown Ad Panel -->
+        <div id={ADSENSE_CONFIG.selectors.drawerId}>
+            <button class="drawer-toggle-btn">▲ Show Ad</button>
+            <div style="text-align: center;">
+                <div class="ad-placeholder-text">Sliding Drawer Ad [Slot {ADSENSE_CONFIG.slots.drawerSliding}]</div>
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:320px;height:50px"
+                     data-ad-client={ADSENSE_CONFIG.publisherId}
+                     data-ad-slot={ADSENSE_CONFIG.slots.drawerSliding}></ins>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client-side script orchestration -->
+    <script>
+        import { gsap } from 'gsap';
+        import { ScrollTrigger } from 'gsap/ScrollTrigger';
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+        import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Theme Toggle Functionality
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        let isDarkMode = document.body.classList.contains('dark-mode');
+
+        themeToggleBtn.textContent = isDarkMode ? 'LIGHT MODE' : 'DARK MODE';
+
+        themeToggleBtn.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            themeToggleBtn.textContent = isDarkMode ? 'LIGHT MODE' : 'DARK MODE';
+        });
+
+        // Section A Intro animations
+        gsap.to('.section-intro p', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.3,
+            ease: 'power3.out'
+        });
+
+        // 1. GSAP ScrollTrigger for Section B Horizontal Scroll
+        const scrollContainer = document.querySelector('.horizontal-scroll-container');
+        const cards = gsap.utils.toArray('.horizontal-card');
+
+        if (scrollContainer && cards.length > 0) {
+            const scrollWidth = scrollContainer.scrollWidth;
+            const viewportWidth = window.innerWidth;
+            const scrollAmount = scrollWidth - viewportWidth;
+
+            // Horizontal translation of the container
+            gsap.to(scrollContainer, {
+                x: () => -scrollAmount,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.horizontal-section',
+                    pin: true,
+                    scrub: 1,
+                    start: 'top top',
+                    end: () => `+=${scrollAmount}`,
+                    invalidateOnRefresh: true,
+                    onEnter: () => toggleAds(true),
+                    onLeave: () => toggleAds(false),
+                    onEnterBack: () => toggleAds(true),
+                    onLeaveBack: () => toggleAds(false)
+                }
+            });
+        }
+
+        // Rule ②: Fade out sidebar ad, fade in stealth ad
+        function toggleAds(inSectionB) {
+            const sidebarAd = document.querySelector(`.${ADSENSE_CONFIG.selectors.sidebarClass}`);
+            const stealthAds = document.querySelectorAll(`.${ADSENSE_CONFIG.selectors.stealthClass}`);
+            
+            if (inSectionB) {
+                gsap.to(sidebarAd, {
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    duration: 0.3,
+                    overwrite: 'auto'
+                });
+                gsap.to(stealthAds, {
+                    opacity: 1,
+                    pointerEvents: 'auto',
+                    duration: 0.5,
+                    overwrite: 'auto'
+                });
+            } else {
+                gsap.to(sidebarAd, {
+                    opacity: 1,
+                    pointerEvents: 'auto',
+                    duration: 0.3,
+                    overwrite: 'auto'
+                });
+                gsap.to(stealthAds, {
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    duration: 0.5,
+                    overwrite: 'auto'
+                });
+            }
+        }
+
+        // 2. Three.js Renderer Setup for Interactive 3D Models
+        const canvases = document.querySelectorAll('.three-canvas');
+        canvases.forEach(canvas => {
+            const scene = new THREE.Scene();
+            
+            const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+            camera.position.z = 7;
+            
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight1.position.set(5, 10, 5);
+            scene.add(dirLight1);
+            
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.6);
+            dirLight2.position.set(-5, -5, -5);
+            scene.add(dirLight2);
+            
+            // Build procedural equatorial mount parts
+            const group = new THREE.Group();
+            
+            const modelType = canvas.getAttribute('data-model');
+            
+            if (modelType === 'mount-base') {
+                // Base Pier
+                const baseGeom = new THREE.CylinderGeometry(1.2, 1.4, 0.8, 32);
+                const darkMetal = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3, metalness: 0.8 });
+                const base = new THREE.Mesh(baseGeom, darkMetal);
+                group.add(base);
+                
+                // Red Anodized Latitude plate
+                const latGeom = new THREE.BoxGeometry(0.4, 1.4, 1.2);
+                const redAnodized = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.2, metalness: 0.9 });
+                const latPlate = new THREE.Mesh(latGeom, redAnodized);
+                latPlate.position.y = 0.8;
+                group.add(latPlate);
+                
+                // Tilt Adjustment knob
+                const knobGeom = new THREE.CylinderGeometry(0.3, 0.3, 0.6, 16);
+                knobGeom.rotateZ(Math.PI / 2);
+                const knob = new THREE.Mesh(knobGeom, darkMetal);
+                knob.position.set(0.4, 0.8, 0);
+                group.add(knob);
+            } else if (modelType === 'harmonic-drive') {
+                // Strain Wave Gear (Harmonic Drive) Model
+                const outerGeom = new THREE.CylinderGeometry(1.5, 1.5, 0.8, 32);
+                const circularSpline = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4, metalness: 0.7 });
+                const outer = new THREE.Mesh(outerGeom, circularSpline);
+                group.add(outer);
+                
+                // Flexspline
+                const flexGeom = new THREE.CylinderGeometry(1.2, 1.2, 0.9, 32);
+                const flexsplineMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.2, metalness: 0.95 });
+                const flexspline = new THREE.Mesh(flexGeom, flexsplineMat);
+                flexspline.position.y = 0.15;
+                group.add(flexspline);
+                
+                // Wave Generator
+                const ovalGeom = new THREE.BoxGeometry(0.4, 1.0, 1.8);
+                const waveGenMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.1, metalness: 0.9 });
+                const waveGen = new THREE.Mesh(ovalGeom, waveGenMat);
+                waveGen.position.y = 0.3;
+                group.add(waveGen);
+            } else {
+                // Complete EQ Mount assembly
+                const metalMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.3, metalness: 0.8 });
+                const accentMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.2, metalness: 0.9 });
+                
+                // Base
+                const base = new THREE.Mesh(new THREE.CylinderGeometry(1, 1.2, 0.5, 32), metalMat);
+                group.add(base);
+                
+                // RA Axis tilted at 37 degrees
+                const raAxis = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 1.8, 32), metalMat);
+                raAxis.rotation.z = Math.PI / 5;
+                raAxis.position.y = 0.8;
+                group.add(raAxis);
+                
+                // DEC Axis
+                const decAxis = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 1.2, 32), metalMat);
+                decAxis.rotation.x = Math.PI / 2;
+                decAxis.position.set(0.4, 1.3, 0);
+                group.add(decAxis);
+                
+                // Saddle (Red)
+                const saddle = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.2, 1.2), accentMat);
+                saddle.position.set(0.6, 1.8, 0);
+                group.add(saddle);
+                
+                // Counterweight shaft & weight
+                const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.8, 16), metalMat);
+                shaft.rotation.z = -Math.PI / 5;
+                shaft.position.set(-0.4, 0.3, 0);
+                group.add(shaft);
+                
+                const weight = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.3, 32), accentMat);
+                weight.rotation.z = -Math.PI / 5;
+                weight.position.set(-0.8, -0.1, 0);
+                group.add(weight);
+            }
+
+            scene.add(group);
+            
+            // OrbitControls
+            const controls = new OrbitControls(camera, renderer);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.enableZoom = true;
+            controls.maxDistance = 12;
+            controls.minDistance = 3;
+            
+            let autoRotate = true;
+            
+            // Disable auto-rotation when user interacts
+            canvas.addEventListener('mousedown', () => autoRotate = false);
+            canvas.addEventListener('touchstart', () => autoRotate = false);
+            
+            const animate = () => {
+                requestAnimationFrame(animate);
+                if (autoRotate) {
+                    group.rotation.y += 0.006;
+                }
+                controls.update();
+                renderer.render(scene, camera);
+            };
+            
+            animate();
+            
+            // Handle canvas resizing
+            const resizeObserver = new ResizeObserver(() => {
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+            });
+            resizeObserver.observe(canvas);
+        });
+
+        // 3. Rule ④: Sliding drawer toggle
+        const drawerPanel = document.getElementById(ADSENSE_CONFIG.selectors.drawerId);
+        const drawerToggle = document.querySelector('.drawer-toggle-btn');
+        if (drawerPanel && drawerToggle) {
+            drawerToggle.addEventListener('click', () => {
+                const isVisible = drawerPanel.classList.toggle('is-visible');
+                drawerToggle.textContent = isVisible ? '▼ Hide Ad' : '▲ Show Ad';
+            });
+        }
+
+        // Initialize AdSense slots
+        try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+            console.error('AdSense initialization error:', e);
+        }
+    </script>
+</body>
+</html>

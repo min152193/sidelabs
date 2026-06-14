@@ -1,0 +1,21 @@
+# Astro build output
+dist/
+
+# Dependencies
+node_modules/
+
+# Astro cache/metadata
+.astro/
+
+# Environment files / Secrets
+.env
+.env.*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
