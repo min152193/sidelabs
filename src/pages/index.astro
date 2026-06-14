@@ -119,46 +119,46 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
     
     <script is:inline>
       (function() {
-        // 1. Force enable vertical scrolling over the legacy app.js lock
-        document.body.style.setProperty('overflow-y', 'auto', 'important');
-        document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
-
-        const indicator = document.getElementById('scroll-indicator');
-        
-        // 2. Immediate brute-force scroll listener to handle chevron fade-out
-        window.addEventListener('scroll', function() {
-          if (indicator) {
-            if (window.scrollY > 15) {
-              indicator.style.opacity = '0';
-              indicator.style.transition = 'opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
-            } else {
-              indicator.style.opacity = '1';
+        window.addEventListener('DOMContentLoaded', function() {
+          var indicator = document.getElementById('scroll-indicator');
+          
+          // Standalone scroll controller for the text/arrow indicator
+          window.addEventListener('scroll', function() {
+            if (indicator) {
+              if (window.scrollY > 20) {
+                indicator.style.opacity = '0';
+                indicator.style.visibility = 'hidden';
+              } else {
+                indicator.style.opacity = '1';
+                indicator.style.visibility = 'visible';
+              }
             }
-          }
-        }, { passive: true });
+          }, { passive: true });
 
-        // 3. Brute-force bottom sentinel redirect over GSAP pinning transform constraints
-        const sentinel = document.getElementById('redirect-sentinel');
-        if (sentinel) {
-          const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-              if (entry.isIntersecting) {
-                // Fade out the main landing view sections natively while preserving theme background
-                const targets = document.querySelectorAll('.landing-section, .controls-container, #scroll-indicator');
-                targets.forEach(el => {
-                  el.style.opacity = '0';
-                  el.style.transition = 'opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
-                });
-                
-                // Execute absolute hard redirect to the blog base after fade-out
+          // Insurance click-to-redirect backup
+          if (indicator) {
+            indicator.style.pointerEvents = 'auto';
+            indicator.style.cursor = 'pointer';
+            indicator.addEventListener('click', function() {
+              window.location.href = '/blog';
+            });
+          }
+
+          // Standalone sentinel tracking for bottom-out navigation
+          var sentinel = document.getElementById('redirect-sentinel');
+          if (sentinel) {
+            var observer = new IntersectionObserver(function(entries) {
+              if (entries[0].isIntersecting) {
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.5s ease';
                 setTimeout(function() {
                   window.location.href = '/blog';
-                }, 600);
+                }, 500);
               }
-            });
-          }, { threshold: 0.1 });
-          observer.observe(sentinel);
-        }
+            }, { threshold: 0.05 });
+            observer.observe(sentinel);
+          }
+        });
       })();
     </script>
 
@@ -166,5 +166,23 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
   <span style="font-weight: 600; display: block;">SCROLL DOWN</span>
   <span style="font-size: 1.8rem; margin-top: 5px; font-weight: bold; line-height: 1; display: block;">↓</span>
 </div>
+
+<style is:global>
+  html, body {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    position: relative !important;
+    touch-action: pan-y !important;
+  }
+  /* Liberate the target content wrappers from layout trapping */
+  .main-wrapper, .landing-section {
+    position: relative !important;
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+</style>
 </body>
 </html>
