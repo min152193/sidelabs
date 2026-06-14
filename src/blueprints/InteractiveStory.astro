@@ -831,24 +831,24 @@ const title = frontmatter?.title || "Blog Post";
         }
     </script>
 <style is:global>
-  /* Force sidebar ad to the absolute window edge */
+  /* Blast the ad container to the literal absolute edge of the window browser */
   .sidebar-ad-container {
     position: fixed !important;
     top: 150px !important;
-    right: 0px !important; /* Force touch the literal right wall of the monitor */
+    right: 12px !important; /* Force pull to the extreme right gap */
     left: auto !important;
     width: 160px !important;
     height: 600px !important;
-    z-index: 99999 !important;
+    z-index: 2147483647 !important; /* Pierce through any pinned GSAP section elements */
+    display: block !important;
   }
-  
-  /* Force center the entire article structure */
+
+  /* Force smash the article layout into a centered narrow column */
   .article-body-wrapper {
-    max-width: 720px !important;
+    max-width: 680px !important;
     margin: 0 auto !important;
-    text-align: center !important;
-  }
-  .article-body-wrapper * {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     text-align: center !important;
   }
 </style>
