@@ -1,0 +1,315 @@
+---
+// Blog archive index base page (Optimal for root-domain AdSense tracking)
+import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
+---
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - SideLabs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`} crossorigin="anonymous"></script>
+    <style>
+        /* Blog archive theme variables and typography visibility overrides */
+        :root {
+            --card-bg: rgba(255, 255, 255, 0.35); /* Premium light glassmorphism */
+            --border-color: rgba(0, 0, 0, 0.08);
+            --text-color: #0f172a;
+            --text-sub-slate: #475569; /* Slate-600 */
+            --heading-gradient: linear-gradient(135deg, #111827 0%, #4f46e5 100%);
+        }
+        
+        body.dark-mode {
+            --card-bg: rgba(30, 41, 59, 0.4); /* Premium dark glassmorphism */
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-color: #f3f4f6;
+            --text-sub-slate: #94a3b8; /* Slate-400 */
+            --heading-gradient: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+        }
+
+        body {
+            display: block !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            min-height: 100vh;
+            background-attachment: fixed !important;
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .blog-header {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 8rem 2rem 2rem 2rem;
+            text-align: center;
+        }
+        
+        .blog-header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: var(--heading-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: background 0.3s ease;
+        }
+        
+        .blog-header p {
+            font-size: 1.2rem;
+            color: var(--text-sub-slate);
+            transition: color 0.3s ease;
+        }
+        
+        .blog-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            box-sizing: border-box;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .posts-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .post-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px; /* corner radius: 20px */
+            padding: 2.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, background 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+        }
+        
+        .post-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(79, 70, 229, 0.4);
+        }
+
+        body.dark-mode .post-card:hover {
+            border-color: rgba(165, 180, 252, 0.4);
+        }
+        
+        .post-date {
+            font-size: 0.8rem;
+            color: #4f46e5;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        body.dark-mode .post-date {
+            color: #a5b4fc;
+        }
+        
+        .post-card h2 {
+            font-size: 1.8rem;
+            margin: 0 0 1rem 0;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+        
+        .post-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-sub-slate);
+            margin: 0;
+            transition: color 0.3s ease;
+        }
+        
+        /* Sidebar Sticky Ad Container */
+        .sidebar-ad-container {
+            width: 160px;
+            flex-shrink: 0;
+            height: 600px;
+            position: sticky;
+            top: 6rem;
+            background: rgba(0, 0, 0, 0.03);
+            border: 1px dashed var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+
+        body.dark-mode .sidebar-ad-container {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .ad-label {
+            font-size: 0.7rem;
+            color: var(--text-sub-slate);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        /* AdSense Native Grid Ad Card (Rule ③ matching) */
+        .grid-ad-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            min-height: 200px;
+            box-sizing: border-box;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .ad-placeholder-text {
+            font-size: 0.75rem;
+            color: var(--text-sub-slate);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            text-align: center;
+            padding: 1rem;
+            transition: color 0.3s ease;
+        }
+        
+        .controls-container {
+            position: fixed !important;
+            top: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            gap: 0.8rem;
+            z-index: 100;
+        }
+        
+        .back-home {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 18px;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        body.dark-mode .back-home {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .back-home:hover {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        body.dark-mode .back-home:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        
+        @media(max-width: 768px) {
+            .blog-container {
+                flex-direction: column;
+            }
+            .sidebar-ad-container {
+                width: 100%;
+                height: 100px;
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    
+    <div class="controls-container">
+        <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
+        <a href="/" class="back-home">HUB</a>
+    </div>
+    
+    <header class="blog-header">
+        <h1>SideLabs Tech Logs</h1>
+        <p>In-depth technical process articles and engineering insights.</p>
+    </header>
+    
+    <main class="blog-container">
+        <section class="posts-list">
+            <a href="/blog/harmonic-equatorial-mount" class="post-card">
+                <div>
+                    <div class="post-date">June 14, 2026</div>
+                    <h2>2-Axis Harmonic Equatorial Mount DIY Process</h2>
+                    <p>Designing, machined fabrication, and control system architecture of a highly accurate astronomical equatorial mount utilizing strain wave gears.</p>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">READ NOW →</p>
+            </a>
+
+            <!-- In-Feed Native Ad Card -->
+            <div class={ADSENSE_CONFIG.selectors.gridClass}>
+                <div class="ad-placeholder-text">In-Feed Native Ad<br/>[Slot {ADSENSE_CONFIG.slots.bottomGridInline}]</div>
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-format="fluid"
+                     data-ad-layout-key="-fb+5w+4e-db+86"
+                     data-ad-client={ADSENSE_CONFIG.publisherId}
+                     data-ad-slot={ADSENSE_CONFIG.slots.bottomGridInline}></ins>
+            </div>
+            
+            <a href="/blog/harmonic-equatorial-mount" class="post-card" style="opacity: 0.6;">
+                <div>
+                    <div class="post-date">May 20, 2026</div>
+                    <h2>Exploring High-Torque Actuators for Telescope Mounts</h2>
+                    <p>Analyzing BLDC motors vs Stepper motors with closed-loop encoders under load-balancing strain wave gear systems.</p>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">READ NOW →</p>
+            </a>
+        </section>
+        
+        <!-- Sidebar Sticky Ad Slot -->
+        <aside class="sidebar-ad-container">
+            <span class="ad-label">Advertisement</span>
+            <div style="font-size: 0.65rem; color: var(--text-sub-slate); margin-bottom: 1rem;">[Slot {ADSENSE_CONFIG.slots.sidebarSticky}]</div>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:120px;height:450px"
+                 data-ad-client={ADSENSE_CONFIG.publisherId}
+                 data-ad-slot={ADSENSE_CONFIG.slots.sidebarSticky}></ins>
+        </aside>
+    </main>
+
+    <script is:inline>
+        // Theme Toggle Functionality
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        let isDarkMode = document.body.classList.contains('dark-mode');
+
+        themeToggleBtn.textContent = isDarkMode ? 'LIGHT MODE' : 'DARK MODE';
+
+        themeToggleBtn.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            themeToggleBtn.textContent = isDarkMode ? 'LIGHT MODE' : 'DARK MODE';
+        });
+
+        try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+            console.error('AdSense load error:', e);
+        }
+    </script>
+</body>
+</html>

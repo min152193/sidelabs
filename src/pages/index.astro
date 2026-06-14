@@ -12,9 +12,8 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
     <link rel="icon" type="image/png" sizes="32x32" href="/ico/fav_32.png?v=1">
     <link rel="apple-touch-icon" sizes="180x180" href="/ico/fav_180.png?v=1">
     <link rel="icon" type="image/png" sizes="192x192" href="/ico/fav_192.png?v=1">
-    <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CONFIG.publisherId}`} crossorigin="anonymous"></script>
     <style>
-        /* SPA Layout & Smooth Scroll Overrides */
+        /* Multi-page scrolling overrides */
         body {
             display: block !important;
             overflow-y: auto !important;
@@ -38,184 +37,82 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
             box-sizing: border-box;
         }
 
-        /* Blog Archive Section Styling */
-        .blog-archive-section {
-            width: 100%;
-            min-height: 100vh;
-            padding: 6rem 2rem;
-            box-sizing: border-box;
+        /* Mechanic ①: Bouncing Chevron Indicator */
+        .chevron-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            cursor: pointer;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
-            z-index: 10;
+            color: var(--text-main);
+            opacity: 0.8;
+            pointer-events: auto;
         }
-
-        .blog-archive-container {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
+        
+        .chevron-indicator.fade-out {
+            opacity: 0;
+            pointer-events: none;
         }
-
-        .blog-archive-header {
-            text-align: center;
+        
+        .chevron-arrow {
+            font-size: 1.8rem;
+            line-height: 1;
+            font-weight: bold;
+            animation: bobbing 1.5s infinite ease-in-out;
         }
-
-        .blog-archive-header h2 {
-            font-size: 3.2rem;
-            margin: 0 0 1rem 0;
-            font-weight: 600;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #111827 0%, #4f46e5 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            transition: background 0.3s ease;
-        }
-
-        body.dark-mode .blog-archive-header h2 {
-            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .blog-archive-header p {
-            font-size: 1.15rem;
-            margin: 0;
-            color: #475569; /* low-saturation slate-600 */
-            transition: color 0.3s ease;
-        }
-
-        body.dark-mode .blog-archive-header p {
-            color: #94a3b8; /* low-saturation slate-400 */
-        }
-
-        .blog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-            width: 100%;
-        }
-
-        .blog-card {
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 20px;
-            padding: 2.5rem;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease, background 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 250px;
-            box-sizing: border-box;
-        }
-
-        body.dark-mode .blog-card {
-            background: rgba(30, 41, 59, 0.4);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-
-        .blog-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(79, 70, 229, 0.4);
-        }
-
-        body.dark-mode .blog-card:hover {
-            border-color: rgba(165, 180, 252, 0.4);
-        }
-
-        .blog-card-date {
-            font-size: 0.8rem;
-            color: #4f46e5;
-            font-weight: 600;
+        
+        .chevron-text {
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 0.75rem;
-            transition: color 0.3s ease;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.25rem;
+            opacity: 0.7;
+        }
+        
+        @keyframes bobbing {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(8px);
+            }
         }
 
-        body.dark-mode .blog-card-date {
-            color: #a5b4fc;
+        /* Scroll Space to trigger cinematic redirect transition */
+        .scroll-spacer {
+            height: 60vh;
+            width: 100%;
+            pointer-events: none;
         }
 
-        .blog-card h3 {
-            font-size: 1.6rem;
-            margin: 0 0 1rem 0;
-            color: #0f172a;
-            font-weight: 600;
-            line-height: 1.3;
-            transition: color 0.3s ease;
+        #redirect-sentinel {
+            height: 10px;
+            width: 100%;
+            pointer-events: none;
         }
 
-        body.dark-mode .blog-card h3 {
-            color: #ffffff;
+        /* Mechanic ③: Immersive Fade-to-Black Overlay */
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            background: #000000;
+            transition: opacity 1.0s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
-        .blog-card p {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #475569;
-            margin: 0;
-            transition: color 0.3s ease;
-        }
-
-        body.dark-mode .blog-card p {
-            color: #94a3b8;
-        }
-
-        .read-more-link {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #4f46e5;
-            margin-top: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            transition: color 0.3s ease;
-        }
-
-        body.dark-mode .read-more-link {
-            color: #a5b4fc;
-        }
-
-        /* AdSense Native Grid Ad Styling */
-        .grid-ad-container {
-            background: rgba(255, 255, 255, 0.35);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            border-radius: 20px;
-            padding: 2.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            min-height: 250px;
-            box-sizing: border-box;
-            transition: background 0.3s ease, border-color 0.3s ease;
-        }
-
-        body.dark-mode .grid-ad-container {
-            background: rgba(30, 41, 59, 0.4);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-
-        .ad-placeholder-text {
-            font-size: 0.75rem;
-            color: rgba(0, 0, 0, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            text-align: center;
-            padding: 1rem;
-            transition: color 0.3s ease;
-        }
-
-        body.dark-mode .ad-placeholder-text {
-            color: rgba(255, 255, 255, 0.3);
+        
+        #transition-overlay.is-active {
+            opacity: 1;
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -226,7 +123,7 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
         <button class="toggle-btn" id="pause-toggle">PAUSE</button>
     </div>
 
-    <!-- Main portfolio landing section -->
+    <!-- Main portfolio landing page -->
     <section class="landing-section">
         <div class="main-wrapper">
             <div class="card-container" id="interactive-card">
@@ -271,91 +168,60 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
         </div>
     </section>
 
-    <!-- SPA Merged Blog Archive Section -->
-    <section class="blog-archive-section">
-        <div class="blog-archive-container">
-            <header class="blog-archive-header">
-                <h2>SideLabs Tech Logs</h2>
-                <p>In-depth technical process articles and engineering insights.</p>
-            </header>
-            
-            <div class="blog-grid">
-                <a href="/blog/harmonic-equatorial-mount" class="blog-card">
-                    <div>
-                        <div class="blog-card-date">June 14, 2026</div>
-                        <h3>2-Axis Harmonic Equatorial Mount DIY Process</h3>
-                        <p>Designing, machined fabrication, and control system architecture of a highly accurate astronomical equatorial mount utilizing strain wave gears.</p>
-                    </div>
-                    <div class="read-more-link">READ NOW →</div>
-                </a>
+    <!-- Bouncing Chevron Indicator -->
+    <div class="chevron-indicator" id="scroll-chevron">
+        <span class="chevron-text">Scroll Down</span>
+        <span class="chevron-arrow">∨</span>
+    </div>
 
-                <!-- AdSense Integrated In-feed Ad (Rule ③ styling inheritance) -->
-                <div class={ADSENSE_CONFIG.selectors.gridClass}>
-                    <div class="ad-placeholder-text">In-Feed Native Ad<br/>[Slot {ADSENSE_CONFIG.slots.bottomGridInline}]</div>
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-format="fluid"
-                         data-ad-layout-key="-fb+5w+4e-db+86"
-                         data-ad-client={ADSENSE_CONFIG.publisherId}
-                         data-ad-slot={ADSENSE_CONFIG.slots.bottomGridInline}></ins>
-                </div>
+    <!-- Scroll Spacer and Sentinel for Redirection -->
+    <div class="scroll-spacer"></div>
+    <div id="redirect-sentinel"></div>
 
-                <a href="/blog/harmonic-equatorial-mount" class="blog-card" style="opacity: 0.7;">
-                    <div>
-                        <div class="blog-card-date">May 20, 2026</div>
-                        <h3>Exploring High-Torque Actuators for Telescope Mounts</h3>
-                        <p>Analyzing BLDC motors vs Stepper motors with closed-loop encoders under load-balancing strain wave gear systems.</p>
-                    </div>
-                    <div class="read-more-link">READ NOW →</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="global-footer" style="margin-top: 6rem;">© SideLabs. All rights reserved.</div>
-    </section>
+    <!-- Fullscreen Blackout Transition Overlay -->
+    <div id="transition-overlay"></div>
 
     <script src="/app.js" is:inline></script>
     
-    <!-- GSAP scroll transition and AdSense init -->
-    <script>
-        import { gsap } from 'gsap';
-        import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chevron = document.getElementById('scroll-chevron');
+            const sentinel = document.getElementById('redirect-sentinel');
+            const overlay = document.getElementById('transition-overlay');
 
-        gsap.registerPlugin(ScrollTrigger);
+            // Mechanic ①: Scroll Fade-out for Chevron
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    chevron.classList.add('fade-out');
+                } else {
+                    chevron.classList.remove('fade-out');
+                }
+            });
 
-        // Smooth glide-in transition for the blog archive section
-        gsap.from('.blog-archive-section', {
-            y: 100,
-            opacity: 0,
-            duration: 1.2,
-            ease: 'power3.out',
-            scrollTrigger: {
-                trigger: '.blog-archive-section',
-                start: 'top 85%',
-                toggleActions: 'play none none none'
+            // Mechanic ③: Freeze scroll, blackout and redirect
+            if (sentinel && overlay) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // 1. Freeze standard scrolling interface
+                            document.body.style.overflow = 'hidden';
+                            document.documentElement.style.overflow = 'hidden';
+                            
+                            // 2. Play fade-to-black animation
+                            overlay.classList.add('is-active');
+                            
+                            // 3. Redirection after blackout animation hits full opacity
+                            setTimeout(() => {
+                                window.location.href = '/blog';
+                            }, 1000);
+                        }
+                    });
+                }, {
+                    threshold: 0.1
+                });
+                observer.observe(sentinel);
             }
         });
-
-        // Staggered cards entrance
-        gsap.from('.blog-card, .grid-ad-container', {
-            y: 50,
-            opacity: 0,
-            duration: 1,
-            stagger: 0.15,
-            ease: 'power3.out',
-            scrollTrigger: {
-                trigger: '.blog-grid',
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-            }
-        });
-
-        // Initialize AdSense
-        try {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) {
-            console.error('AdSense initialization error:', e);
-        }
     </script>
 </body>
 </html>

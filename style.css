@@ -1,3 +1,7 @@
+html {
+    overscroll-behavior: none;
+}
+
 :root {
     --bg-color: #d4d4d8;
     --card-fixed-bg: rgba(30, 35, 45, 0.82);
@@ -32,6 +36,7 @@ body.dark-mode {
 }
 
 body { 
+    overscroll-behavior: none;
     margin: 0; padding: 0; 
     background-color: var(--bg-color); 
     color: var(--text-main); 
