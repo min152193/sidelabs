@@ -117,56 +117,49 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
 
     <script src="/app.js" is:inline></script>
     
-    <!-- GSAP logic for fade-out and blackout redirect -->
-    <script>
-        import { gsap } from 'gsap';
-        import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    <script is:inline>
+      (function() {
+        // 1. Force enable vertical scrolling over the legacy app.js lock
+        document.body.style.setProperty('overflow-y', 'auto', 'important');
+        document.documentElement.style.setProperty('overflow-y', 'auto', 'important');
 
-        gsap.registerPlugin(ScrollTrigger);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const sentinel = document.getElementById('redirect-sentinel');
-
-            window.addEventListener('scroll', () => {
-                const indicator = document.getElementById('scroll-indicator');
-                if (indicator) {
-                    if (window.scrollY > 30) {
-                        indicator.style.setProperty('opacity', '0', 'important');
-                        indicator.style.transition = 'opacity 0.3s ease';
-                    } else {
-                        indicator.style.setProperty('opacity', '1', 'important');
-                        indicator.style.transition = 'opacity 0.3s ease';
-                    }
-                }
-            });
-
-            // Mechanic ③: Freeze scroll, GSAP native fade-out of body and redirect
-            if (sentinel) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            // 1. Freeze standard scrolling interface
-                            document.body.style.overflow = 'hidden';
-                            document.documentElement.style.overflow = 'hidden';
-                            
-                            // 2. Play fade-out animation using GSAP with elite ease on main-wrapper
-                            gsap.to('.main-wrapper', {
-                                opacity: 0,
-                                duration: 0.8,
-                                ease: 'power2.inOut',
-                                onComplete: () => {
-                                    // 3. Redirection
-                                    window.location.href = '/blog';
-                                }
-                            });
-                        }
-                    });
-                }, {
-                    threshold: 0.1
-                });
-                observer.observe(sentinel);
+        const indicator = document.getElementById('scroll-indicator');
+        
+        // 2. Immediate brute-force scroll listener to handle chevron fade-out
+        window.addEventListener('scroll', function() {
+          if (indicator) {
+            if (window.scrollY > 15) {
+              indicator.style.opacity = '0';
+              indicator.style.transition = 'opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+            } else {
+              indicator.style.opacity = '1';
             }
-        });
+          }
+        }, { passive: true });
+
+        // 3. Brute-force bottom sentinel redirect over GSAP pinning transform constraints
+        const sentinel = document.getElementById('redirect-sentinel');
+        if (sentinel) {
+          const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                // Fade out the main landing view sections natively while preserving theme background
+                const targets = document.querySelectorAll('.landing-section, .controls-container, #scroll-indicator');
+                targets.forEach(el => {
+                  el.style.opacity = '0';
+                  el.style.transition = 'opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+                });
+                
+                // Execute absolute hard redirect to the blog base after fade-out
+                setTimeout(function() {
+                  window.location.href = '/blog';
+                }, 600);
+              }
+            });
+          }, { threshold: 0.1 });
+          observer.observe(sentinel);
+        }
+      })();
     </script>
 
 <div id="scroll-indicator" style="position: fixed !important; bottom: 40px; left: 50%; transform: translateX(-50%); display: block !important; text-align: center !important; z-index: 2147483647 !important; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite; pointer-events: none; mix-blend-mode: difference !important; visibility: visible !important; opacity: 1 !important;">
