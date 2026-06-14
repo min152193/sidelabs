@@ -66,7 +66,7 @@ const title = frontmatter?.title || "Blog Post";
         .sidebar-ad-container {
             position: fixed !important;
             top: 150px !important;
-            right: 24px !important; /* Forcefully snap to the absolute right edge of the browser window */
+            right: 24px !important; /* Force bind to the absolute edge of the screen */
             left: auto !important;
             width: 160px !important;
             height: 600px !important;
@@ -110,9 +110,6 @@ const title = frontmatter?.title || "Blog Post";
             max-width: 720px !important;
             margin: 0 auto !important;
             text-align: center !important;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
         .article-body-wrapper p, .article-body-wrapper h1, .article-body-wrapper h2 {
             text-align: center !important;
