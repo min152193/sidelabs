@@ -1,13 +1,17 @@
 ---
-// Clean Baseline index.astro - Forced Restoration
+import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
 ---
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SideLabs - Reconstructed Baseline</title>
+    <title>SideLabs</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="/ico/fav_32.png?v=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="/ico/fav_180.png?v=1">
+    <link rel="icon" type="image/png" sizes="192x192" href="/ico/fav_192.png?v=1">
     <style is:global>
         /* 🚨 ANTI-HIJACKING CSS LAYER: FORCE SCROLLING 🚨 */
         html, body {
@@ -50,14 +54,61 @@
         }
     </style>
 </head>
-<body>
+<body class="dark-mode">
+    <div class="controls-container">
+        <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
+        <button class="toggle-btn" id="pause-toggle">PAUSE</button>
+    </div>
+
+    <!-- Main portfolio landing page -->
     <section class="landing-section">
-        <h1>SideLabs [Reconstruction View]</h1>
-        <p>The core rendering bottleneck is being identified.</p>
+        <div class="main-wrapper">
+            <div class="card-container" id="interactive-card">
+                <div class="card" id="card-element">
+                    
+                    <div class="card-face front-face">
+                        <div class="card-bg"></div>
+                        <div class="border-glow"></div>
+                        <div class="glint"></div>
+                        <div class="card-content">
+                            <h1 class="logo">SideLabs</h1>
+                            <div class="contact-section">
+                                <div class="label">Contact</div>
+                                <a class="email-btn" href="mailto:contact@sidelabs.net">contact@sidelabs.net</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-face back-face">
+                        <div class="card-bg"></div>
+                        <div class="border-glow"></div>
+                        <div class="glint"></div>
+                        <div class="solid-overlay"></div>
+                        <div class="card-content center-content">
+                            <form class="login-grid" id="login-form">
+                                <div class="login-title">LOGIN</div>
+                                <div class="login-fields">
+                                    <input type="email" name="email" class="login-input" placeholder="Email" required>
+                                    <input type="password" name="password" class="login-input" placeholder="Password" required>
+                                    <button type="submit" class="submit-btn">SIGN IN</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="action-container">
+                <button class="spin-btn" id="spin-trigger">LOGIN</button>
+            </div>
+        </div>
     </section>
 
     <div class="scroll-spacer-baseline"></div>
     <div id="redirect-sentinel-baseline" style="height: 10px; width: 100%; pointer-events: none;"></div>
+
+    <script src="/app.js" is:inline></script>
 
     <div id="scroll-indicator-baseline" style="position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 2147483647; color: #94a3b8; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounceBaseline 2s infinite; pointer-events: auto; cursor: pointer; visibility: visible; opacity: 1;">
         <span style="font-weight: 600;">SCROLL DOWN</span>
