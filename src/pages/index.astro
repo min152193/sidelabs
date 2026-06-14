@@ -4,6 +4,33 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <script is:inline>
+      // Block any external script from executing e.preventDefault() on scroll/wheel/touch
+      (function() {
+        const originalAddEventListener = window.addEventListener;
+        window.addEventListener = function(type, listener, options) {
+          if (type === 'wheel' || type === 'touchmove' || type === 'pointermove') {
+            // Force all scroll-related events to be passive, making preventDefault() illegal
+            if (typeof options === 'object') {
+              options.passive = true;
+            } else {
+              options = { passive: true };
+            }
+          }
+          return originalAddEventListener.call(this, type, listener, options);
+        };
+        
+        // Do the same for document and body
+        const docAddEventListener = document.addEventListener;
+        document.addEventListener = function(type, listener, options) {
+          if (type === 'wheel' || type === 'touchmove') {
+            options = typeof options === 'object' ? options : {};
+            options.passive = true;
+          }
+          return docAddEventListener.call(this, type, listener, options);
+        };
+      })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SideLabs</title>
