@@ -1,0 +1,12 @@
+{
+  "name": "sidelabs-email-worker",
+  "main": "index.js",
+  "compatibility_date": "2026-06-12",
+  "routes": [
+    {
+      "pattern": "sidelabs.net/api/contact",
+      "zone_name": "sidelabs.net",
+      "custom_domain": true
+    }
+  ]
+}
