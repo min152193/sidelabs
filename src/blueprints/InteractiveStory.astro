@@ -63,15 +63,14 @@ const title = frontmatter?.title || "Blog Post";
         }
 
         /* Ad Placement Realignment: Force sidebar ad strictly on the RIGHT */
-        /* Ad Placement Realignment: Force sidebar ad strictly on the RIGHT */
         .sidebar-ad-container {
             position: fixed !important;
-            top: 120px !important;
-            right: 40px !important; /* Bound strictly to the right side */
-            left: auto !important;   /* Kill the left binding */
+            top: 150px !important;
+            right: 24px !important; /* Forcefully snap to the absolute right edge of the browser window */
+            left: auto !important;
             width: 160px !important;
             height: 600px !important;
-            z-index: 500 !important;
+            z-index: 999 !important;
             background: rgba(0, 0, 0, 0.03);
             border: 1px dashed var(--border-color);
             border-radius: 8px;
@@ -436,6 +435,17 @@ const title = frontmatter?.title || "Blog Post";
             background: rgba(255, 255, 255, 0.06);
         }
         
+        .legal-link {
+            color: var(--text-sub-slate);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .legal-link:hover {
+            color: #4f46e5 !important;
+        }
+        body.dark-mode .legal-link:hover {
+            color: #a5b4fc !important;
+        }
         @media(max-width: 1200px) {
             .sidebar-ad-container {
                 display: none; /* Hide sidebar ad on smaller viewports to prevent layout overlap */
@@ -517,6 +527,19 @@ const title = frontmatter?.title || "Blog Post";
         </div>
 
         <!-- Rule ④: Drawer / Dropdown Ad Panel -->
+        <!-- Structured Aesthetic Footer Section with AdSense Compliance -->
+        <footer class="blog-footer" style="display: flex; flex-direction: column; align-items: center; gap: 1.2rem; max-width: 900px; margin: 4rem auto 2rem auto; padding: 2rem; border-top: 1px solid var(--border-color); box-sizing: border-box;">
+            <div style="font-size: 0.8rem; color: var(--text-sub-slate);">
+                © 2026 SideLabs. All rights reserved.
+            </div>
+            
+            <!-- AdSense Legal Compliance Footer Row -->
+            <div class="footer-legal-row" style="display: flex; gap: 1.5rem; justify-content: center; font-size: 0.75rem;">
+                <a href="/legal/privacy" class="legal-link">개인정보처리방침</a>
+                <a href="/legal/terms" class="legal-link">이용약관</a>
+                <a href="/legal/disclaimer" class="legal-link">면책조항</a>
+            </div>
+        </footer>
         <div id={ADSENSE_CONFIG.selectors.drawerId}>
             <button class="drawer-toggle-btn">▲ Show Ad</button>
             <div style="text-align: center;">

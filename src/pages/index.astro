@@ -66,14 +66,15 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
             width: 100vw !important;
             height: 100vh !important;
             background: #000000 !important;
-            z-index: 999999 !important;
+            z-index: 9999999 !important; /* Maximum priority above GSAP pin contexts */
             opacity: 0;
             pointer-events: none;
         }
     </style>
 </head>
 <body class="dark-mode">
-
+    <!-- Fullscreen Blackout Transition Overlay at absolute root of body -->
+    <div id="transition-overlay"></div>
     <div class="controls-container">
         <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
         <button class="toggle-btn" id="pause-toggle">PAUSE</button>
@@ -129,8 +130,6 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
     <div class="scroll-spacer"></div>
     <div id="redirect-sentinel"></div>
 
-    <!-- Fullscreen Blackout Transition Overlay at absolute root of body -->
-    <div id="transition-overlay"></div>
 
     <script src="/app.js" is:inline></script>
     
@@ -145,15 +144,29 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
             const sentinel = document.getElementById('redirect-sentinel');
             const overlay = document.getElementById('transition-overlay');
 
-            // Mechanic ①: Scroll Fade-out using GSAP ScrollTrigger
-            gsap.to('#scroll-indicator', { 
-                opacity: 0, 
-                pointerEvents: 'none', 
-                scrollTrigger: { 
-                    trigger: '.main-wrapper', 
-                    start: 'top top', 
-                    scrub: true 
-                } 
+            let indicatorFaded = false;
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 30) {
+                    if (!indicatorFaded) {
+                        indicatorFaded = true;
+                        gsap.to('#scroll-indicator', {
+                            opacity: 0,
+                            pointerEvents: 'none',
+                            duration: 0.4,
+                            overwrite: 'auto'
+                        });
+                    }
+                } else {
+                    if (indicatorFaded) {
+                        indicatorFaded = false;
+                        gsap.to('#scroll-indicator', {
+                            opacity: 1,
+                            pointerEvents: 'auto',
+                            duration: 0.4,
+                            overwrite: 'auto'
+                        });
+                    }
+                }
             });
 
             // Mechanic ③: Freeze scroll, GSAP blackout and redirect
@@ -185,9 +198,9 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
         });
     </script>
 
-    <div id="scroll-indicator" style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 100; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite;">
+    <div id="scroll-indicator" style="position: fixed !important; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 500; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite;">
       <span>SCROLL DOWN</span>
-      <span style="font-size: 1.2rem; margin-top: 5px;">\/</span>
+      <span style="font-size: 1.2rem; margin-top: 5px;">▼</span>
     </div>
 </body>
 </html>
