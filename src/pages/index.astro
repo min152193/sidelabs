@@ -1,160 +1,124 @@
 ---
-import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
+// Virtual Scroll Restored index.astro
 ---
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script is:inline>
-      // Block any external script from executing e.preventDefault() on scroll/wheel/touch
-      (function() {
-        const originalAddEventListener = window.addEventListener;
-        window.addEventListener = function(type, listener, options) {
-          if (type === 'wheel' || type === 'touchmove' || type === 'pointermove') {
-            // Force all scroll-related events to be passive, making preventDefault() illegal
-            if (typeof options === 'object') {
-              options.passive = true;
-            } else {
-              options = { passive: true };
-            }
-          }
-          return originalAddEventListener.call(this, type, listener, options);
-        };
-        
-        // Do the same for document and body
-        const docAddEventListener = document.addEventListener;
-        document.addEventListener = function(type, listener, options) {
-          if (type === 'wheel' || type === 'touchmove') {
-            options = typeof options === 'object' ? options : {};
-            options.passive = true;
-          }
-          return docAddEventListener.call(this, type, listener, options);
-        };
-      })();
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SideLabs</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <link rel="icon" type="image/png" sizes="32x32" href="/ico/fav_32.png?v=1">
-    <link rel="apple-touch-icon" sizes="180x180" href="/ico/fav_180.png?v=1">
-    <link rel="icon" type="image/png" sizes="192x192" href="/ico/fav_192.png?v=1">
-    <style is:global>
-      html, body {
-        overflow-y: auto !important; /* Absolute priority */
-        overflow-x: hidden !important;
-        height: auto !important;
-        min-width: 100vw;
-        min-height: 100vh !important;
-        position: relative !important;
-        touch-action: pan-y !important;
-      }
-      .main-wrapper, .landing-section {
-        position: relative !important;
-        overflow: visible !important; /* Do not let this trap focus */
-        height: auto !important;
-        min-height: 100vh !important;
-      }
-      .controls-container {
-        position: fixed !important;
-        top: 1.5rem !important;
-        right: 1.5rem !important;
-        display: flex !important;
-        gap: 0.8rem !important;
-        z-index: 100 !important;
-      }
-      @keyframes bounce {
-        0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-        40% { transform: translateX(-50%) translateY(-10px); }
-        60% { transform: translateX(-50%) translateY(-5px); }
-      }
+    
+    <style>
+        /* Bouncing Arrow Animation */
+        @keyframes bounceTarget {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+        #virtual-scroll-indicator {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 2147483647; color: #94a3b8; font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem; letter-spacing: 0.2em; animation: bounceTarget 2s infinite;
+            pointer-events: auto; cursor: pointer; transition: opacity 0.5s ease;
+        }
     </style>
 </head>
-<body class="dark-mode">
+<body class="dark-mode" style="overflow: hidden !important;">
+
     <div class="controls-container">
         <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
         <button class="toggle-btn" id="pause-toggle">PAUSE</button>
     </div>
 
-    <!-- Main portfolio landing page -->
-    <section class="landing-section">
-        <div class="main-wrapper">
-            <div class="card-container" id="interactive-card">
-                <div class="card" id="card-element">
-                    
-                    <div class="card-face front-face">
-                        <div class="card-bg"></div>
-                        <div class="border-glow"></div>
-                        <div class="glint"></div>
-                        <div class="card-content">
-                            <h1 class="logo">SideLabs</h1>
-                            <div class="contact-section">
-                                <div class="label">Contact</div>
-                                <a class="email-btn" href="mailto:contact@sidelabs.net">contact@sidelabs.net</a>
+    <div class="main-wrapper">
+        <div class="card-container" id="interactive-card">
+            <div class="card" id="card-element">
+                <div class="card-face front-face">
+                    <div class="card-bg"></div>
+                    <div class="border-glow"></div>
+                    <div class="glint"></div>
+                    <div class="card-content">
+                        <h1 class="logo">SideLabs</h1>
+                        <div class="contact-section">
+                            <div class="label">Contact</div>
+                            <a class="email-btn" href="mailto:contact@sidelabs.net">contact@sidelabs.net</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-face back-face">
+                    <div class="card-bg"></div>
+                    <div class="border-glow"></div>
+                    <div class="glint"></div>
+                    <div class="solid-overlay"></div>
+                    <div class="card-content center-content">
+                        <form class="login-grid" id="login-form">
+                            <div class="login-title">LOGIN</div>
+                            <div class="login-fields">
+                                <input type="email" name="email" class="login-input" placeholder="Email" required>
+                                <input type="password" name="password" class="login-input" placeholder="Password" required>
+                                <button type="submit" class="submit-btn">SIGN IN</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
-
-                    <div class="card-face back-face">
-                        <div class="card-bg"></div>
-                        <div class="border-glow"></div>
-                        <div class="glint"></div>
-                        <div class="solid-overlay"></div>
-                        <div class="card-content center-content">
-                            <form class="login-grid" id="login-form">
-                                <div class="login-title">LOGIN</div>
-                                <div class="login-fields">
-                                    <input type="email" name="email" class="login-input" placeholder="Email" required>
-                                    <input type="password" name="password" class="login-input" placeholder="Password" required>
-                                    <button type="submit" class="submit-btn">SIGN IN</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
                 </div>
             </div>
-
-            <div class="action-container">
-                <button class="spin-btn" id="spin-trigger">LOGIN</button>
-            </div>
         </div>
-    </section>
+        <div class="action-container">
+            <button class="spin-btn" id="spin-trigger">LOGIN</button>
+        </div>
+    </div>
 
-    <div class="scroll-spacer" style="height: 120vh; width: 100%; pointer-events: none;"></div>
-    <div id="redirect-sentinel" style="height: 10px; width: 100%; pointer-events: none;"></div>
-
-    <script src="/app.js" is:inline></script>
-
-    <div id="scroll-indicator" style="position: fixed !important; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 2147483647 !important; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite; pointer-events: auto; cursor: pointer; visibility: visible; opacity: 1;">
+    <div id="virtual-scroll-indicator">
         <span style="font-weight: 600;">SCROLL DOWN</span>
         <span style="font-size: 1.8rem; margin-top: 5px; font-weight: bold; line-height: 1;">↓</span>
     </div>
 
+    <div class="global-footer">© SideLabs. All rights reserved.</div>
+
+    <script is:inline src="/app.js"></script>
+
     <script is:inline>
-      (function() {
-        window.addEventListener('load', function() {
-          var indicator = document.getElementById('scroll-indicator');
-          window.addEventListener('scroll', function() {
-            if (indicator) {
-              indicator.style.opacity = (window.scrollY > 15) ? '0' : '1';
-              indicator.style.transition = 'opacity 0.2s ease';
-            }
-          }, { passive: true });
-          
-          var sentinel = document.getElementById('redirect-sentinel');
-          if (sentinel) {
-            var observer = new IntersectionObserver(function(entries) {
-              if (entries[0].isIntersecting) {
+        document.addEventListener('DOMContentLoaded', function() {
+            var isRedirecting = false;
+            var indicator = document.getElementById('virtual-scroll-indicator');
+
+            function triggerRedirect() {
+                if (isRedirecting) return;
+                isRedirecting = true;
+                if (indicator) indicator.style.opacity = '0';
+                
+                // Fade entire body
+                document.body.style.transition = 'opacity 0.6s ease';
                 document.body.style.opacity = '0';
-                document.body.style.transition = 'opacity 0.4s ease';
-                setTimeout(function() { window.location.href = '/blog'; }, 400);
-              }
-            }, { threshold: 0.05 });
-            observer.observe(sentinel);
-          }
+                
+                setTimeout(function() {
+                    window.location.href = '/blog';
+                }, 600);
+            }
+
+            // Detect Desktop Mouse Wheel
+            window.addEventListener('wheel', function(e) {
+                if (e.deltaY > 30) triggerRedirect(); // User scrolled downwards
+            }, { passive: true });
+
+            // Detect Mobile Touch Swipe
+            var touchStartY = 0;
+            window.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            window.addEventListener('touchmove', function(e) {
+                var touchEndY = e.touches[0].clientY;
+                if (touchStartY - touchEndY > 40) triggerRedirect(); // User swiped upwards
+            }, { passive: true });
+
+            // Fallback Arrow Click
+            if (indicator) indicator.addEventListener('click', triggerRedirect);
         });
-      })();
     </script>
 </body>
 </html>
