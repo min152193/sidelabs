@@ -9,8 +9,23 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/ico/fav_32.png?v=1">
     <link rel="apple-touch-icon" sizes="180x180" href="/ico/fav_180.png?v=1">
     <link rel="icon" type="image/png" sizes="192x192" href="/ico/fav_192.png?v=1">
+    <style>
+        /* Bouncing Arrow Animation */
+        @keyframes bounceTarget {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+        #virtual-scroll-indicator {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center;
+            z-index: 2147483647; color: #94a3b8; font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem; letter-spacing: 0.2em; animation: bounceTarget 2s infinite;
+            pointer-events: auto; cursor: pointer; transition: opacity 0.5s ease;
+        }
+    </style>
 </head>
-<body class="dark-mode">
+<body class="dark-mode" style="overflow: hidden !important;">
 
     <div class="controls-container">
         <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
@@ -62,5 +77,50 @@
     <div class="global-footer">© SideLabs. All rights reserved.</div>
 
     <script src="app.js"></script>
+
+    <div id="virtual-scroll-indicator">
+        <span style="font-weight: 600;">SCROLL DOWN</span>
+        <span style="font-size: 1.8rem; margin-top: 5px; font-weight: bold; line-height: 1;">↓</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var isRedirecting = false;
+            var indicator = document.getElementById('virtual-scroll-indicator');
+
+            function triggerRedirect() {
+                if (isRedirecting) return;
+                isRedirecting = true;
+                if (indicator) indicator.style.opacity = '0';
+                
+                // Fade entire body
+                document.body.style.transition = 'opacity 0.6s ease';
+                document.body.style.opacity = '0';
+                
+                setTimeout(function() {
+                    window.location.href = '/blog';
+                }, 600);
+            }
+
+            // Detect Desktop Mouse Wheel
+            window.addEventListener('wheel', function(e) {
+                if (e.deltaY > 30) triggerRedirect(); // User scrolled downwards
+            }, { passive: true });
+
+            // Detect Mobile Touch Swipe
+            var touchStartY = 0;
+            window.addEventListener('touchstart', function(e) {
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            
+            window.addEventListener('touchmove', function(e) {
+                var touchEndY = e.touches[0].clientY;
+                if (touchStartY - touchEndY > 40) triggerRedirect(); // User swiped upwards
+            }, { passive: true });
+
+            // Fallback Arrow Click
+            if (indicator) indicator.addEventListener('click', triggerRedirect);
+        });
+    </script>
 </body>
 </html>

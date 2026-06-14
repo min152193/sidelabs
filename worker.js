@@ -9,6 +9,16 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // 1. ASTRO BYPASS GUARD
+    if (url.pathname === '/blog' || url.pathname.startsWith('/blog/')) {
+      // If using Cloudflare Pages with Workers integration, use env.ASSETS
+      if (env.ASSETS) {
+        return env.ASSETS.fetch(request);
+      }
+      // If using standard static bypass, pass-through to origin
+      return fetch(request);
+    }
+
     // 정적 자산 라우팅
     if (url.pathname === "/") {
       return new Response(HTML_TEMPLATE, { headers: { "content-type": "text/html;charset=UTF-8" } });
