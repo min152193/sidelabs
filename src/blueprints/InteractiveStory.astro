@@ -830,5 +830,27 @@ const title = frontmatter?.title || "Blog Post";
             console.error('AdSense initialization error:', e);
         }
     </script>
+<style is:global>
+  /* Force sidebar ad to the absolute window edge */
+  .sidebar-ad-container {
+    position: fixed !important;
+    top: 150px !important;
+    right: 0px !important; /* Force touch the literal right wall of the monitor */
+    left: auto !important;
+    width: 160px !important;
+    height: 600px !important;
+    z-index: 99999 !important;
+  }
+  
+  /* Force center the entire article structure */
+  .article-body-wrapper {
+    max-width: 720px !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+  }
+  .article-body-wrapper * {
+    text-align: center !important;
+  }
+</style>
 </body>
 </html>
