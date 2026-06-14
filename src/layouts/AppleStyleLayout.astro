@@ -63,20 +63,21 @@ const title = frontmatter?.title || "Blog Post";
         }
 
         /* Ad Placement Realignment: Force sidebar ad strictly on the RIGHT */
+        /* Ad Placement Realignment: Force sidebar ad strictly on the RIGHT */
         .sidebar-ad-container {
-            position: fixed;
-            top: 100px;
-            right: 40px; /* Lock strictly to the right side of the viewport */
-            left: auto;  /* Override left */
-            width: 160px;
-            height: 600px;
+            position: fixed !important;
+            top: 120px !important;
+            right: 40px !important; /* Bound strictly to the right side */
+            left: auto !important;   /* Kill the left binding */
+            width: 160px !important;
+            height: 600px !important;
+            z-index: 500 !important;
             background: rgba(0, 0, 0, 0.03);
             border: 1px dashed var(--border-color);
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 50;
             transition: opacity 0.3s ease, background 0.3s ease, border-color 0.3s ease;
         }
         
@@ -104,6 +105,19 @@ const title = frontmatter?.title || "Blog Post";
             margin: 0 auto;
             padding: 8rem 2rem 4rem 2rem;
             box-sizing: border-box;
+        }
+
+        .article-body-wrapper {
+            max-width: 720px !important;
+            margin: 0 auto !important;
+            text-align: center !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .article-body-wrapper p, .article-body-wrapper h1, .article-body-wrapper h2 {
+            text-align: center !important;
+            width: 100%;
         }
 
         .article-body, 
@@ -451,7 +465,9 @@ const title = frontmatter?.title || "Blog Post";
 
         <div class="post-container">
             <!-- Render content of Section A -->
-            <slot name="section-a" />
+            <article class="article-body-wrapper">
+                <slot name="section-a" />
+            </article>
         </div>
 
         <!-- Section B: Horizontal scrolling pinned interactive area -->
@@ -463,8 +479,9 @@ const title = frontmatter?.title || "Blog Post";
 
         <div class="post-container">
             <!-- Render content of Section C -->
-            <slot name="section-c" />
-            
+            <article class="article-body-wrapper">
+                <slot name="section-c" />
+            </article>
             <div class="section-conclusion">
                 <h3 class="bottom-grid-title">관련 글 추천</h3>
                 <!-- Rule ③: Bottom Grid with Inline Ad Slot -->
