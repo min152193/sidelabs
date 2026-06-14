@@ -59,22 +59,9 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
             pointer-events: none;
         }
 
-        #transition-overlay {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: #000000 !important;
-            z-index: 9999999 !important; /* Maximum priority above GSAP pin contexts */
-            opacity: 0;
-            pointer-events: none;
-        }
     </style>
 </head>
 <body class="dark-mode">
-    <!-- Fullscreen Blackout Transition Overlay at absolute root of body -->
-    <div id="transition-overlay"></div>
     <div class="controls-container">
         <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
         <button class="toggle-btn" id="pause-toggle">PAUSE</button>
@@ -142,7 +129,6 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
 
         document.addEventListener('DOMContentLoaded', () => {
             const sentinel = document.getElementById('redirect-sentinel');
-            const overlay = document.getElementById('transition-overlay');
 
             let indicatorFaded = false;
             window.addEventListener('scroll', () => {
@@ -169,8 +155,8 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
                 }
             });
 
-            // Mechanic ③: Freeze scroll, GSAP blackout and redirect
-            if (sentinel && overlay) {
+            // Mechanic ③: Freeze scroll, GSAP native fade-out of body and redirect
+            if (sentinel) {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
@@ -178,11 +164,11 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
                             document.body.style.overflow = 'hidden';
                             document.documentElement.style.overflow = 'hidden';
                             
-                            // 2. Play fade-to-black animation using GSAP with elite ease
-                            gsap.to(overlay, {
-                                opacity: 1,
-                                duration: 1.0,
-                                ease: 'power3.inOut',
+                            // 2. Play fade-out animation using GSAP with elite ease on body
+                            gsap.to(document.body, {
+                                opacity: 0,
+                                duration: 0.8,
+                                ease: 'power2.inOut',
                                 onComplete: () => {
                                     // 3. Redirection
                                     window.location.href = '/blog';
@@ -198,9 +184,9 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
         });
     </script>
 
-    <div id="scroll-indicator" style="position: fixed !important; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 500; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite;">
+    <div id="scroll-indicator" style="position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; z-index: 9999; color: #94a3b8; font-family: 'Poppins', sans-serif; font-size: 0.75rem; letter-spacing: 0.2em; animation: bounce 2s infinite;">
       <span>SCROLL DOWN</span>
-      <span style="font-size: 1.2rem; margin-top: 5px;">▼</span>
+      <span style="font-size: 1.5rem; margin-top: 5px; font-weight: bold;">↓</span>
     </div>
 </body>
 </html>
