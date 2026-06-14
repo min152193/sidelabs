@@ -1,27 +1,27 @@
 # SideLabs Monorepo Structure
 
-This repository is split into three independent directories to prevent routing conflicts and enable independent Cloudflare deployments.
+This repository is split into independent directories to prevent routing conflicts and enable independent Cloudflare deployments.
 
 ## Directory Structure
 
 ```
 .
-├── landing-page/     # Main 3D Card Landing Page Worker + static templates
-├── blog-astro/       # Astro Static/SSR Blog under the '/blog' subdirectory
+├── landing/          # Main 3D Card Landing Page Worker + static templates
+├── blog/             # Astro Static/SSR Blog under the '/blog' subdirectory
 └── email-worker/     # Isolated Worker handling 'POST /api/contact' sending
 ```
 
 ---
 
-## 1. Landing Page (`/landing-page`)
+## 1. Landing Page (`/landing`)
 
 ### Overview
 Serves the 3D card layout at the root (`/`) path, static styles, assets, and auth endpoints. Features a virtual scroll listener for navigation redirection to `/blog`.
 
 ### Build & Deploy
-1. Navigate to `/landing-page`:
+1. Navigate to `/landing`:
    ```bash
-   cd landing-page
+   cd landing
    ```
 2. Deploy directly to Cloudflare Workers using Wrangler:
    ```bash
@@ -30,15 +30,15 @@ Serves the 3D card layout at the root (`/`) path, static styles, assets, and aut
 
 ---
 
-## 2. Astro Blog (`/blog-astro`)
+## 2. Astro Blog (`/blog`)
 
 ### Overview
 A static/SSR Astro blog containing technical design pages and AdSense components. Configured to live under the `/blog` base route.
 
 ### Build & Deploy
-1. Navigate to `/blog-astro`:
+1. Navigate to `/blog`:
    ```bash
-   cd blog-astro
+   cd blog
    ```
 2. Build the static assets:
    ```bash
@@ -78,7 +78,7 @@ To map all three parts under `sidelabs.net` cleanly without conflicting:
 
 1. **Main Landing:**
    - Map route `sidelabs.net/*` (or root `sidelabs.net`) to the **Landing Page** worker.
-   - Configure the Landing Worker script to bypass/forward requests starting with `/blog` using `return fetch(request)`.
+   - The Landing Worker script is configured to bypass/forward requests starting with `/blog` using `return fetch(request)`.
 
 2. **Astro Blog:**
    - Bind the **Cloudflare Pages** project (`sidelabs-blog`) to the custom domain `sidelabs.net` with the path prefix `/blog` in the Cloudflare Page's custom domains settings.
