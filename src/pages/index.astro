@@ -37,7 +37,7 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
             box-sizing: border-box;
         }
 
-        /* Mechanic ①: Bouncing Chevron Indicator */
+        /* Mechanic ①: Upgraded Bouncing Chevron & SCROLL DOWN Text */
         .chevron-indicator {
             position: fixed;
             bottom: 2rem;
@@ -45,18 +45,12 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
             transform: translateX(-50%);
             z-index: 100;
             cursor: pointer;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             color: var(--text-main);
             opacity: 0.8;
             pointer-events: auto;
-        }
-        
-        .chevron-indicator.fade-out {
-            opacity: 0;
-            pointer-events: none;
         }
         
         .chevron-arrow {
@@ -69,8 +63,9 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
         .chevron-text {
             font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-bottom: 0.25rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
             opacity: 0.7;
         }
         
@@ -96,23 +91,17 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
             pointer-events: none;
         }
 
-        /* Mechanic ③: Immersive Fade-to-Black Overlay */
+        /* Mechanic ② & ③: Core Bug Fix for Fullscreen Blackout Transition Overlay */
         #transition-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            z-index: 9999;
+            z-index: 99999;
             opacity: 0;
             pointer-events: none;
             background: #000000;
-            transition: opacity 1.0s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        
-        #transition-overlay.is-active {
-            opacity: 1;
-            pointer-events: auto;
         }
     </style>
 </head>
@@ -168,9 +157,9 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
         </div>
     </section>
 
-    <!-- Bouncing Chevron Indicator -->
+    <!-- Upgraded SCROLL DOWN and Bouncing Chevron Indicator -->
     <div class="chevron-indicator" id="scroll-chevron">
-        <span class="chevron-text">Scroll Down</span>
+        <span class="chevron-text">SCROLL DOWN</span>
         <span class="chevron-arrow">∨</span>
     </div>
 
@@ -178,27 +167,48 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
     <div class="scroll-spacer"></div>
     <div id="redirect-sentinel"></div>
 
-    <!-- Fullscreen Blackout Transition Overlay -->
+    <!-- Fullscreen Blackout Transition Overlay at absolute root of body -->
     <div id="transition-overlay"></div>
 
     <script src="/app.js" is:inline></script>
     
-    <script is:inline>
+    <!-- GSAP logic for fade-out and blackout redirect -->
+    <script>
+        import { gsap } from 'gsap';
+
         document.addEventListener('DOMContentLoaded', () => {
             const chevron = document.getElementById('scroll-chevron');
             const sentinel = document.getElementById('redirect-sentinel');
             const overlay = document.getElementById('transition-overlay');
 
-            // Mechanic ①: Scroll Fade-out for Chevron
+            let chevronFaded = false;
+
+            // Mechanic ①: Scroll Fade-out using GSAP
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
-                    chevron.classList.add('fade-out');
+                    if (!chevronFaded) {
+                        chevronFaded = true;
+                        gsap.to(chevron, {
+                            opacity: 0,
+                            pointerEvents: 'none',
+                            duration: 0.4,
+                            overwrite: 'auto'
+                        });
+                    }
                 } else {
-                    chevron.classList.remove('fade-out');
+                    if (chevronFaded) {
+                        chevronFaded = false;
+                        gsap.to(chevron, {
+                            opacity: 0.8,
+                            pointerEvents: 'auto',
+                            duration: 0.4,
+                            overwrite: 'auto'
+                        });
+                    }
                 }
             });
 
-            // Mechanic ③: Freeze scroll, blackout and redirect
+            // Mechanic ③: Freeze scroll, GSAP blackout and redirect
             if (sentinel && overlay) {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
@@ -207,13 +217,16 @@ import { ADSENSE_CONFIG } from '../config/adsenseConfig.js';
                             document.body.style.overflow = 'hidden';
                             document.documentElement.style.overflow = 'hidden';
                             
-                            // 2. Play fade-to-black animation
-                            overlay.classList.add('is-active');
-                            
-                            // 3. Redirection after blackout animation hits full opacity
-                            setTimeout(() => {
-                                window.location.href = '/blog';
-                            }, 1000);
+                            // 2. Play fade-to-black animation using GSAP with elite ease
+                            gsap.to(overlay, {
+                                opacity: 1,
+                                duration: 1.0,
+                                ease: 'power3.inOut',
+                                onComplete: () => {
+                                    // 3. Redirection
+                                    window.location.href = '/blog';
+                                }
+                            });
                         }
                     });
                 }, {

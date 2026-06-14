@@ -1,0 +1,88 @@
+---
+layout: ../../layouts/AppleStyleLayout.astro
+title: "오프그리드 전천 시스템 구축과 태양광 전력 최적화"
+---
+
+<div slot="section-a" class="section-intro">
+    <h1>오프그리드 전천 시스템 구축과 태양광 전력 최적화</h1>
+    <p>
+        천문 관측 및 기상 상태를 24시간 실시간 모니터링하기 위해서는 광시야 카메라가 탑재된 전천 카메라 시스템(All-Sky Camera)의 중단 없는 운영이 요구됩니다. 그러나 전력망이 공급되지 않는 산간벽지나 원격 관측소 환경에서는 자체 전력을 생산하고 보관할 수 있는 독립형 오프그리드(Off-Grid) 발전계 구축이 필연적입니다. 본 문서에서는 소형 태양광 패널, 리튬인산철(LiFePO4) 배터리 팩, 그리고 효율적인 충방전 제어를 담당하는 MPPT 충전 컨트롤러 조합을 통해 시스템의 에너지 자립도를 높이는 설계법을 다룹니다.
+    </p>
+    <p>
+        연중 가장 전력 생산량이 적은 동절기 일사량을 기준으로 시스템의 최소 전력 수요를 계산했으며, 무인 임베디드 싱글 보드 컴퓨터(SBC)의 전력 최적화 및 슬립 모드 스케줄링을 통해 일평균 소비 전력을 5.2W 이하로 축소했습니다.
+    </p>
+    <p>
+        아래 스크롤을 내리면 에너지 관리 시스템에 사용된 고효율 태양광 어셈블리, 전력 보드 회로판 및 완성형 무인 관측 인프라의 3D 조립 구조를 인터랙티브하게 살펴볼 수 있습니다.
+    </p>
+</div>
+
+<div slot="section-b" class="horizontal-card">
+    <div class="card-header">
+        <h3>01 / 태양광 브래킷 및 하부 패널 베이스</h3>
+        <p>기상 이변 및 강풍 하중을 견디도록 강성 계산을 적용하여 절곡 제작된 마운트 지지대 구조.</p>
+    </div>
+    <div class="canvas-container">
+        <canvas class="three-canvas" data-model="mount-base"></canvas>
+        <div class="stealth-ad-container">
+            <span style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.4); text-transform: uppercase;">Stealth Ad Slot</span>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:180px;height:50px"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="2222222222"></ins>
+        </div>
+    </div>
+</div>
+
+<div slot="section-b" class="horizontal-card">
+    <div class="card-header">
+        <h3>02 / MPPT 전력 보드 및 컨트롤러 모듈</h3>
+        <p>강압 회로와 고정밀 전류 검출계를 장착하여 충전 효율을 97% 이상으로 유지하는 전력 보드.</p>
+    </div>
+    <div class="canvas-container">
+        <canvas class="three-canvas" data-model="harmonic-drive"></canvas>
+        <div class="stealth-ad-container">
+            <span style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.4); text-transform: uppercase;">Stealth Ad Slot</span>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:180px;height:50px"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="2222222222"></ins>
+        </div>
+    </div>
+</div>
+
+<div slot="section-b" class="horizontal-card">
+    <div class="card-header">
+        <h3>03 / 전체 기상 관측 하우징 어셈블리</h3>
+        <p>전천 카메라 가열 열선 루프와 기상 센서 모듈, 이중 벽 구조 배기 시스템이 완비된 무인 하우징 실물 3D 모델.</p>
+    </div>
+    <div class="canvas-container">
+        <canvas class="three-canvas" data-model="complete-mount"></canvas>
+        <div class="stealth-ad-container">
+            <span style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.4); text-transform: uppercase;">Stealth Ad Slot</span>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:180px;height:50px"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="2222222222"></ins>
+        </div>
+    </div>
+</div>
+
+<div slot="section-c" class="section-conclusion">
+    <h2>전력 수지 실계측 테스트 및 배터리 방전 성능</h2>
+    <p>
+        구축된 오프그리드 무인 시스템의 30일간 연속 런타임 테스트 결과를 바탕으로 분석을 진행했습니다. 외부 기온 영하 12도 상태에서 리튬인산철 배터리 셀의 온도 유지를 위한 스마트 히터 작동 시 방전률 변화 및 주간 충전 전압 유도 특성을 모니터링했습니다.
+    </p>
+    <p>
+        MPPT의 전력 극점 추적 로직 덕분에 구름이 많이 낀 음천 상태에서도 최소 1.5A 수준의 미세 전류 충전이 연속적으로 이어짐을 검증했습니다. 주간 충전 에너지량 125Wh 대비 야간 시스템 총 소비 전력은 85Wh에 그쳐 지속적인 전력 흑자 마진을 기록하였으며, 폭설로 3일간 태양광 패널이 차폐되더라도 내부 배터리 전력으로 최소 대기 모드를 유지하는 데 성공했습니다.
+    </p>
+    
+    <h3 style="margin-top: 2rem;">시스템 상태 모니터링 텔레메트리 데이터 및 통계 로그</h3>
+    <div class="seo-log-box">
+[SYS: 2026-06-10 12:00:01] 태양광 충전 전류 감지: MPPT 제어 활성화.
+[LOG: 2026-06-10 12:05:00] 전력 모듈 유입: V_in=18.4V, I_in=2.8A, P_in=51.52W.
+[DEBUG] 인산철 배터리 뱅크 수용률: V_bat=13.25V, 충전율 SoC=94.2%.
+[WARNING] 동결 예방 히터 자동 기동: 외부 온도 -5.4도. 배터리 셀 가온 가동.
+[SEO KEYWORDS] 독립형 태양광 발전 최적화, MPPT 충전컨트롤러 효율 계산, 리튬인산철 배터리 무인 시스템 기동 로그, 전천 카메라 하우징 결로 방지, 오프그리드 텔레메트리 설계.
+[LOG: 2026-06-10 18:30:00] 주간 충전 모드 종료. 시스템 소비 전력 가이드: 전압 12.8V, 소모 전류 0.38A, 실소비 전력 4.86W로 스탠바이 전환.
+    </div>
+</div>

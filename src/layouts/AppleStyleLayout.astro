@@ -19,7 +19,7 @@ const title = frontmatter?.title || "Blog Post";
     <style>
         /* CSS Variables & Theme Integration */
         :root {
-            --card-bg: rgba(255, 255, 255, 0.35);
+            --card-bg: rgba(255, 255, 255, 0.35); /* Premium light glassmorphism */
             --border-color: rgba(0, 0, 0, 0.08);
             --text-color: #0f172a;
             --text-sub-slate: #475569; /* slate-600 */
@@ -28,7 +28,7 @@ const title = frontmatter?.title || "Blog Post";
         }
         
         body.dark-mode {
-            --card-bg: rgba(30, 41, 59, 0.4);
+            --card-bg: rgba(30, 41, 59, 0.4); /* Premium dark glassmorphism */
             --border-color: rgba(255, 255, 255, 0.08);
             --text-color: #f3f4f6;
             --text-sub-slate: #94a3b8; /* slate-400 */
@@ -62,11 +62,12 @@ const title = frontmatter?.title || "Blog Post";
             z-index: 100;
         }
 
-        /* Sidebar Ad Styling */
+        /* Ad Placement Realignment: Force sidebar ad strictly on the RIGHT */
         .sidebar-ad-container {
             position: fixed;
             top: 100px;
-            left: 20px;
+            right: 40px; /* Lock strictly to the right side of the viewport */
+            left: auto;  /* Override left */
             width: 160px;
             height: 600px;
             background: rgba(0, 0, 0, 0.03);
@@ -97,7 +98,7 @@ const title = frontmatter?.title || "Blog Post";
             color: rgba(255, 255, 255, 0.3);
         }
 
-        /* Main post layout */
+        /* Typography Clarity: Center-align core markdown text blocks */
         .post-container {
             max-width: 900px;
             margin: 0 auto;
@@ -105,13 +106,12 @@ const title = frontmatter?.title || "Blog Post";
             box-sizing: border-box;
         }
 
-        /* Section A: Intro */
-        .section-intro {
-            min-height: 70vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            margin-bottom: 5rem;
+        .article-body, 
+        .section-intro, 
+        .section-conclusion {
+            text-align: center;
+            max-width: 720px;
+            margin: 0 auto;
         }
         
         .section-intro h1 {
@@ -121,6 +121,7 @@ const title = frontmatter?.title || "Blog Post";
             background: var(--heading-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-align: center;
         }
         
         .section-intro p {
@@ -131,6 +132,7 @@ const title = frontmatter?.title || "Blog Post";
             opacity: 0; /* Animated via GSAP */
             transform: translateY(20px);
             transition: color 0.3s ease;
+            text-align: center;
         }
 
         /* Section B: Horizontal Scroll interactive section */
@@ -148,8 +150,8 @@ const title = frontmatter?.title || "Blog Post";
         .horizontal-scroll-container {
             display: flex;
             flex-wrap: nowrap;
-            padding-left: 200px; /* offset for sidebar */
-            padding-right: 100px;
+            padding-left: 100px;
+            padding-right: 250px; /* Offset for right sidebar */
             height: 100%;
             align-items: center;
             will-change: transform;
@@ -184,6 +186,7 @@ const title = frontmatter?.title || "Blog Post";
         
         .card-header {
             margin-bottom: 1rem;
+            text-align: left; /* Keep card labels aligned left for hierarchy */
         }
         
         .card-header h3 {
@@ -248,6 +251,7 @@ const title = frontmatter?.title || "Blog Post";
         .section-conclusion h2 {
             font-size: 2rem;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
         
         .seo-log-box {
@@ -261,8 +265,10 @@ const title = frontmatter?.title || "Blog Post";
             color: #0369a1; /* sky-700 */
             max-height: 300px;
             overflow-y: auto;
+            margin-top: 2rem;
             margin-bottom: 3rem;
             transition: background 0.3s ease, color 0.3s ease;
+            text-align: left; /* Keep raw system logs aligned left */
         }
 
         body.dark-mode .seo-log-box {
@@ -277,6 +283,7 @@ const title = frontmatter?.title || "Blog Post";
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.5rem;
             transition: border-color 0.3s ease;
+            text-align: center;
         }
         
         .related-posts-grid {
@@ -298,6 +305,7 @@ const title = frontmatter?.title || "Blog Post";
             flex-direction: column;
             justify-content: space-between;
             min-height: 150px;
+            text-align: left;
         }
         
         .related-card:hover {
@@ -413,9 +421,18 @@ const title = frontmatter?.title || "Blog Post";
         body.dark-mode .back-to-home:hover {
             background: rgba(255, 255, 255, 0.06);
         }
+        
+        @media(max-width: 1200px) {
+            .sidebar-ad-container {
+                display: none; /* Hide sidebar ad on smaller viewports to prevent layout overlap */
+            }
+            .horizontal-scroll-container {
+                padding-right: 100px;
+            }
+        }
     </style>
 </head>
-<body class="dark-mode">
+<body>
     <div class="blog-wrapper">
         
         <div class="controls-container">
@@ -423,7 +440,7 @@ const title = frontmatter?.title || "Blog Post";
             <a href="/" class="back-to-home">HUB</a>
         </div>
         
-        <!-- Rule ②: Sidebar Sticky Ad -->
+        <!-- Sidebar Sticky Ad (Rule ②: Strictly on the RIGHT) -->
         <div class={ADSENSE_CONFIG.selectors.sidebarClass}>
             <div class="ad-placeholder-text">Sidebar ad<br/>[Slot {ADSENSE_CONFIG.slots.sidebarSticky}]</div>
             <ins class="adsbygoogle"
@@ -449,15 +466,15 @@ const title = frontmatter?.title || "Blog Post";
             <slot name="section-c" />
             
             <div class="section-conclusion">
-                <h3 class="bottom-grid-title">Recommended Grid</h3>
+                <h3 class="bottom-grid-title">관련 글 추천</h3>
                 <!-- Rule ③: Bottom Grid with Inline Ad Slot -->
                 <div class="related-posts-grid">
                     <a href="/blog/harmonic-equatorial-mount" class="related-card">
                         <div>
-                            <h4>2-Axis Harmonic Equatorial Mount DIY</h4>
-                            <p>Designing and constructing an equatorial telescope mount using strain wave gears.</p>
+                            <h4>자작 2축 하모닉 적도의 제작기</h4>
+                            <p>하모닉 감속기를 활용한 고정밀 천체 추적 장비의 기계 가공 및 제어 시스템 구성.</p>
                         </div>
-                        <p style="font-size: 0.75rem; color: var(--text-color); font-weight: 600; margin-top: 1rem;">READ NOW →</p>
+                        <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1rem;">읽기 →</p>
                     </a>
                     
                     <!-- Grid ad inheriting exact card styling -->
@@ -471,12 +488,12 @@ const title = frontmatter?.title || "Blog Post";
                              data-ad-slot={ADSENSE_CONFIG.slots.bottomGridInline}></ins>
                     </div>
 
-                    <a href="/" class="related-card">
+                    <a href="/blog/offgrid-allsky-solar" class="related-card">
                         <div>
-                            <h4>Exploring High-Torque Actuators</h4>
-                            <p>An in-depth review of BLDC motors and harmonic gearheads for precise control.</p>
+                            <h4>오프그리드 전천 시스템 구축</h4>
+                            <p>안정적인 전천 영상 기록을 위한 태양광 발전 패널 최적화 프로세스.</p>
                         </div>
-                        <p style="font-size: 0.75rem; color: var(--text-color); font-weight: 600; margin-top: 1rem;">GO HOME →</p>
+                        <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1rem;">읽기 →</p>
                     </a>
                 </div>
             </div>

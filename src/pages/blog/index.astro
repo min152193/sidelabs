@@ -20,6 +20,7 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
             --text-color: #0f172a;
             --text-sub-slate: #475569; /* Slate-600 */
             --heading-gradient: linear-gradient(135deg, #111827 0%, #4f46e5 100%);
+            --drawer-overlay-bg: rgba(0, 0, 0, 0.2);
         }
         
         body.dark-mode {
@@ -28,6 +29,7 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
             --text-color: #f3f4f6;
             --text-sub-slate: #94a3b8; /* Slate-400 */
             --heading-gradient: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            --drawer-overlay-bg: rgba(0, 0, 0, 0.6);
         }
 
         body {
@@ -38,6 +40,116 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
             background-attachment: fixed !important;
             color: var(--text-color);
             transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        /* Floating Hamburger Button */
+        .hamburger-btn {
+            position: fixed;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: background 0.3s, border-color 0.3s, transform 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .hamburger-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .hamburger-bar {
+            width: 18px;
+            height: 2px;
+            background: var(--text-color);
+            border-radius: 2px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* Category Drawer */
+        .category-drawer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: rgba(212, 212, 216, 0.95); /* Match landing light bg */
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-color);
+            z-index: 999;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            padding: 6rem 2rem 2rem 2rem;
+            box-sizing: border-box;
+        }
+
+        body.dark-mode .category-drawer {
+            background: rgba(11, 15, 25, 0.95); /* Match landing dark bg */
+        }
+
+        .category-drawer.is-open {
+            transform: translateX(0);
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--drawer-overlay-bg);
+            z-index: 998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .drawer-overlay.is-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .category-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            letter-spacing: -0.01em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .category-item {
+            font-size: 1rem;
+            color: var(--text-sub-slate);
+            cursor: pointer;
+            transition: color 0.2s, padding-left 0.2s;
+            padding: 0.5rem 0;
+            font-weight: 500;
+        }
+
+        .category-item:hover, .category-item.active {
+            color: #4f46e5;
+            padding-left: 8px;
+        }
+
+        body.dark-mode .category-item:hover, body.dark-mode .category-item.active {
+            color: #a5b4fc;
         }
         
         .blog-header {
@@ -102,17 +214,38 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
             border-color: rgba(165, 180, 252, 0.4);
         }
         
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
         .post-date {
             font-size: 0.8rem;
             color: #4f46e5;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            margin-bottom: 0.75rem;
             font-weight: 600;
             transition: color 0.3s ease;
         }
 
         body.dark-mode .post-date {
+            color: #a5b4fc;
+        }
+
+        .post-category-tag {
+            font-size: 0.7rem;
+            background: rgba(79, 70, 229, 0.1);
+            color: #4f46e5;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        body.dark-mode .post-category-tag {
+            background: rgba(165, 180, 252, 0.1);
             color: #a5b4fc;
         }
         
@@ -224,21 +357,99 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
         body.dark-mode .back-home:hover {
             background: rgba(255, 255, 255, 0.06);
         }
+
+        /* Aesthetic Footer Section */
+        .blog-footer {
+            width: 100%;
+            max-width: 900px;
+            margin: 6rem auto 2rem auto;
+            padding: 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .footer-left {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .footer-center {
+            font-size: 0.75rem;
+            color: var(--text-sub-slate);
+        }
+
+        /* visually cute inline redirect buttons */
+        .footer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+        }
+
+        .footer-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        body.dark-mode .footer-btn:hover {
+            background: rgba(165, 180, 252, 0.05);
+        }
+
+        .footer-icon {
+            display: inline-block;
+            vertical-align: middle;
+        }
         
-        @media(max-width: 768px) {
+        @media(max-width: 900px) {
             .blog-container {
                 flex-direction: column;
             }
             .sidebar-ad-container {
-                width: 100%;
-                height: 100px;
-                position: static;
+                display: none;
+            }
+            .blog-footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body class="dark-mode">
     
+    <!-- Hamburger Button -->
+    <button class="hamburger-btn" id="drawer-toggle" aria-label="Toggle Category Drawer">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+    </button>
+
+    <!-- Category Drawer -->
+    <div class="category-drawer" id="category-drawer">
+        <div class="category-title">카테고리</div>
+        <div class="category-list">
+            <div class="category-item active" data-category="all">전체보기</div>
+            <div class="category-item" data-category="mechanical">Mechanical</div>
+            <div class="category-item" data-category="system-cloud">System/Cloud</div>
+            <div class="category-item" data-category="development">Development</div>
+            <div class="category-item" data-category="study-log">Study/Log</div>
+        </div>
+    </div>
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
     <div class="controls-container">
         <button class="toggle-btn" id="theme-toggle">LIGHT MODE</button>
         <a href="/" class="back-home">HUB</a>
@@ -246,22 +457,39 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
     
     <header class="blog-header">
         <h1>SideLabs Tech Logs</h1>
-        <p>In-depth technical process articles and engineering insights.</p>
+        <p>기술 개발 프로세스 기록 및 엔지니어링 리포트.</p>
     </header>
     
     <main class="blog-container">
-        <section class="posts-list">
-            <a href="/blog/harmonic-equatorial-mount" class="post-card">
+        <section class="posts-list" id="posts-container">
+            <!-- Post 1 -->
+            <a href="/blog/harmonic-equatorial-mount" class="post-card" data-cat="mechanical">
                 <div>
-                    <div class="post-date">June 14, 2026</div>
-                    <h2>2-Axis Harmonic Equatorial Mount DIY Process</h2>
-                    <p>Designing, machined fabrication, and control system architecture of a highly accurate astronomical equatorial mount utilizing strain wave gears.</p>
+                    <div class="post-meta">
+                        <span class="post-date">June 14, 2026</span>
+                        <span class="post-category-tag">Mechanical</span>
+                    </div>
+                    <h2>자작 2축 하모닉 적도의 제작기</h2>
+                    <p>하모닉 드라이브 감속기(Strain Wave Gear)를 사용한 소형 고정밀 천체 추적 적도의 기계 설계, 가공 조립 및 성능 측정 프로세스 분석.</p>
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">READ NOW →</p>
+                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">읽기 →</p>
             </a>
 
-            <!-- In-Feed Native Ad Card -->
-            <div class={ADSENSE_CONFIG.selectors.gridClass}>
+            <!-- Post 2 -->
+            <a href="/blog/offgrid-allsky-solar" class="post-card" data-cat="system-cloud">
+                <div>
+                    <div class="post-meta">
+                        <span class="post-date">June 10, 2026</span>
+                        <span class="post-category-tag">System/Cloud</span>
+                    </div>
+                    <h2>오프그리드 전천 시스템 구축과 태양광 전력 최적화</h2>
+                    <p>원격 환경에서의 안정적인 무인 기상 관측 및 전천 돔 카메라 제어를 위한 소형 태양광 충전 컨트롤러 시스템 설계 기법.</p>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">읽기 →</p>
+            </a>
+
+            <!-- In-Feed Native Ad Card (Rule ③) -->
+            <div class={ADSENSE_CONFIG.selectors.gridClass} id="ad-card">
                 <div class="ad-placeholder-text">In-Feed Native Ad<br/>[Slot {ADSENSE_CONFIG.slots.bottomGridInline}]</div>
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -271,13 +499,43 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
                      data-ad-slot={ADSENSE_CONFIG.slots.bottomGridInline}></ins>
             </div>
             
-            <a href="/blog/harmonic-equatorial-mount" class="post-card" style="opacity: 0.6;">
+            <!-- Post 3 -->
+            <a href="/blog/cloudflare-workers-rate-limiting" class="post-card" data-cat="development">
                 <div>
-                    <div class="post-date">May 20, 2026</div>
-                    <h2>Exploring High-Torque Actuators for Telescope Mounts</h2>
-                    <p>Analyzing BLDC motors vs Stepper motors with closed-loop encoders under load-balancing strain wave gear systems.</p>
+                    <div class="post-meta">
+                        <span class="post-date">June 05, 2026</span>
+                        <span class="post-category-tag">Development</span>
+                    </div>
+                    <h2>Cloudflare Workers를 활용한 레이트 리밋 분산 처리</h2>
+                    <p>글로벌 에지 환경에서 데이터베이스에 가해지는 트래픽 부하를 줄이기 위해 KV 스토리지와 Cloudflare Worker 기반 속도 제한 미들웨어 최적화 프로세스.</p>
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">READ NOW →</p>
+                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">읽기 →</p>
+            </a>
+
+            <!-- Post 4 -->
+            <a href="/blog/arm-mac-after-effects-optimization" class="post-card" data-cat="study-log">
+                <div>
+                    <div class="post-meta">
+                        <span class="post-date">May 28, 2026</span>
+                        <span class="post-category-tag">Study/Log</span>
+                    </div>
+                    <h2>Arm Mac 환경에서의 에프터 이펙트 25 초기 버그 및 최적화 로그</h2>
+                    <p>Apple Silicon M시리즈 아키텍처 환경에서 어도비 에프터 이펙트 최신 버전 렌더 엔진 크래시 및 GPU 가속 인코딩 메모리 최적화 해결 로그.</p>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">읽기 →</p>
+            </a>
+
+            <!-- Post 5 -->
+            <a href="/blog/gsap-scrolltrigger-storytelling-web" class="post-card" data-cat="development">
+                <div>
+                    <div class="post-meta">
+                        <span class="post-date">May 15, 2026</span>
+                        <span class="post-category-tag">Development</span>
+                    </div>
+                    <h2>GSAP ScrollTrigger를 활용한 인터랙티브 스토리텔링 웹 개발 기법</h2>
+                    <p>스크롤 움직임에 따른 몰입감 있는 레이아웃 변화와 뷰포트 피닝, 2축 카메라 트랙 제어를 구현하는 WebGL Three.js 동기화 웹 스토리텔링 아키텍처 가이드.</p>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-color); font-weight: 600; margin-top: 1.5rem;">읽기 →</p>
             </a>
         </section>
         
@@ -292,6 +550,31 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
         </aside>
     </main>
 
+    <!-- Structured Aesthetic Footer Section -->
+    <footer class="blog-footer">
+        <div class="footer-left">
+            <!-- GitHub Button with mini SVG logo -->
+            <a href="https://github.com/sidelabs" target="_blank" rel="noopener noreferrer" class="footer-btn">
+                <svg class="footer-icon" viewBox="0 0 16 16" width="14" height="14" fill="currentColor">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                GitHub
+            </a>
+            <!-- Email Button with mini SVG mail icon -->
+            <a href="mailto:contact@sidelabs.net" class="footer-btn">
+                <svg class="footer-icon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                Email
+            </a>
+        </div>
+        <div class="footer-center">
+            © 2026 SideLabs. All rights reserved.
+        </div>
+        <div style="width: 150px;"></div> <!-- visual spacer for balance -->
+    </footer>
+
     <script is:inline>
         // Theme Toggle Functionality
         const themeToggleBtn = document.getElementById('theme-toggle');
@@ -303,6 +586,53 @@ import { ADSENSE_CONFIG } from '../../config/adsenseConfig.js';
             isDarkMode = !isDarkMode;
             document.body.classList.toggle('dark-mode');
             themeToggleBtn.textContent = isDarkMode ? 'LIGHT MODE' : 'DARK MODE';
+        });
+
+        // Hamburger Menu & Category Drawer Logic
+        const drawerToggle = document.getElementById('drawer-toggle');
+        const categoryDrawer = document.getElementById('category-drawer');
+        const drawerOverlay = document.getElementById('drawer-overlay');
+        const categoryItems = document.querySelectorAll('.category-item');
+        const postCards = document.querySelectorAll('.post-card');
+        const adCard = document.getElementById('ad-card');
+
+        function toggleDrawer() {
+            const isOpen = categoryDrawer.classList.toggle('is-open');
+            drawerOverlay.classList.toggle('is-active', isOpen);
+        }
+
+        drawerToggle.addEventListener('click', toggleDrawer);
+        drawerOverlay.addEventListener('click', toggleDrawer);
+
+        // Category Filtering Logic (Client-side)
+        categoryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Remove active class from all items
+                categoryItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+
+                const selectedCategory = item.getAttribute('data-category');
+
+                // Filter cards
+                postCards.forEach(card => {
+                    const cardCat = card.getAttribute('data-cat');
+                    if (selectedCategory === 'all' || cardCat === selectedCategory) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Control ad display in filtered lists
+                if (selectedCategory === 'all') {
+                    adCard.style.display = 'flex';
+                } else {
+                    adCard.style.display = 'none';
+                }
+
+                // Close drawer after selection
+                toggleDrawer();
+            });
         });
 
         try {
